@@ -1,7 +1,7 @@
 ---
 sidebar_position: 1
 slug: /
-description: "Apresentação do projeto Dashboard Morro Verde"
+description: "Apresentação do projeto"
 ---
 
 # Mensuração Agrícola via Imagens de Satélite
@@ -12,11 +12,11 @@ description: "Apresentação do projeto Dashboard Morro Verde"
 
 <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', marginBottom: '2rem' }}>
   <div style={{ flex: '0 0 300px', margin: '0 auto 1rem' }}>
-    <img src={require("../static/img/effatha_agro_logo.png").default} alt="Logo do IPT" style={{ width: '100%', maxWidth: '400px', height: 'auto' }} />
+    <img src={require("../static/img/effatha_agro_logo.jpeg").default} alt="Logo do IPT" style={{ width: '100%', maxWidth: '400px', height: 'auto' }} />
   </div>
   <div style={{ flex: '1', minWidth: '300px', paddingLeft: '1rem' }}>
-    <h3>ATVOS</h3>
-    <p>A Atvos é uma das maiores produtoras do setor sucroenergético brasileiro, com atuação integrada em operações agrícolas e industriais. Sua produção de etanol, açúcar e bioenergia é referência em escala, inovação e sustentabilidade.</p>
+    <h3>Effatha Agro</h3>
+    <p>A Effatha é a primeira NatSciTech do mundo, uma empresa brasileira pioneira em tecnologias que unem ciência da natureza e inovação tecnológica. Sua solução exclusiva utiliza frequências extremamente baixas do campo eletromagnético da Terra (0,000001 a 99,999999 Hz) para manipular interações atômicas em moléculas químicas e biológicas, gerando efeitos benéficos para agricultura, saúde, indústria química e energética.</p>
   </div>
 </div>
 
