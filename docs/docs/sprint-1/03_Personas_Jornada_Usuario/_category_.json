@@ -1,0 +1,8 @@
+{
+  "label": "Personas e Jornada do Usuário",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Definição das personas e suas jornadas dentro da plataforma para guiar o design da solução."
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "label": "Variáveis Agrícolas",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "Relatório descrevendo os índices e métricas que serão monitorados via satélite."
+  }
+}

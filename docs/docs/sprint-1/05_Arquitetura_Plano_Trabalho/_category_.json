@@ -1,0 +1,8 @@
+{
+  "label": "Arquitetura e Plano de Trabalho",
+  "position": 5,
+  "link": {
+    "type": "generated-index",
+    "description": "Documento descrevendo a arquitetura técnica básica e plano de trabalho da solução."
+  }
+}
