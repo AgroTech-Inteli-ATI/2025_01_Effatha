@@ -1,0 +1,8 @@
+{
+  "label": "Suporte",
+  "position": 5,
+  "link": {
+    "type": "generated-index",
+    "description": "Informações de instalação, execução, solução de problemas e contatos da equipe de desenvolvimento para suporte técnico."
+  }
+}

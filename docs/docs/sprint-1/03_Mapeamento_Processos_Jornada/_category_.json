@@ -1,0 +1,8 @@
+{
+  "label": "Mapeamento de Processos e Jornada",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Levantamento dos atores principais e definição das jornadas do usuário na plataforma."
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "label": "Dicionário de Dados e Tabelas",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "Inventário das fontes de dados e definição das tabelas auxiliares necessárias."
+  }
+}
