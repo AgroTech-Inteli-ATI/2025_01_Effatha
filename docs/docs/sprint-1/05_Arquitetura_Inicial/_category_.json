@@ -1,0 +1,8 @@
+{
+  "label": "Arquitetura Inicial da Solução",
+  "position": 5,
+  "link": {
+    "type": "generated-index",
+    "description": "Documento técnico descrevendo a arquitetura básica da solução MVP."
+  }
+}
