@@ -6,6 +6,8 @@ description: "Requisitos funcionais do MVP de monitoramento agrícola"
 
 # Requisitos Funcionais do MVP
 
+Esta seção apresenta os requisitos funcionais do MVP de monitoramento agrícola, detalhando as principais funcionalidades que o sistema deve oferecer para atender às necessidades dos usuários. Os requisitos foram organizados em tópicos que abrangem desde a seleção de áreas até a geração de relatórios, visando garantir uma solução completa, eficiente e alinhada às demandas do setor agrícola.
+
 ## Seleção de Área
 
 ### Definição de Polígonos
@@ -191,3 +193,9 @@ description: "Requisitos funcionais do MVP de monitoramento agrícola"
 ### Compartilhamento de Resultados
 
 ### Help e Documentação
+
+---
+
+## Conclusão
+
+Os requisitos funcionais descritos acima estabelecem o conjunto mínimo de funcionalidades essenciais para o MVP de monitoramento agrícola. Ao implementar essas funções, o sistema estará apto a oferecer valor real aos usuários, promovendo eficiência, precisão e facilidade de uso nas atividades de monitoramento e análise agrícola.
