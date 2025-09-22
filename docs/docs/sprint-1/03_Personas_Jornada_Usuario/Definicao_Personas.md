@@ -8,7 +8,7 @@ description: "Definição das personas do sistema"
 
 ## Introdução
 
-&emsp; Nesta seção, elaborou-se as personas para um entendimento mais profundo das dores, necessidades e desejos da pessoa que irá utilizar a solução. Nesse sentido, expõe-se a principal persona criada para representar o perfil de Engenheiro Agrônomo, profissional que desempenha papel central na adoção e utilização da tecnologia proposta.
+&emsp; Nesta seção, foram elaboradas as personas do projeto para um melhor entendimento das dores, necessidades e desejos dos futuros usuários da solução. A persona escolhida pela equipe como a principal usuário da solução, com base nas conversas com o parceiro, foi o Engenheiro Agrônomo que será responsável pela adoção e utilização da aplicação desenvolvida.
 
 ### Persona 01 : Lucas Ferreira
 
@@ -47,4 +47,4 @@ description: "Definição das personas do sistema"
 * Fortalece a tomada de decisão técnica, dando segurança ao agrônomo para recomendar investimentos.
 * Reduz tempo e custos operacionais, aumentando eficiência e sustentabilidade da produção agrícola.
 
-&emsp; A construção da persona Lucas Ferreira, engenheiro agrônomo permitiu compreender de forma clara o objetivo da Effatha e como sua solução gera valor no campo, representando um profissional experiente em grandes culturas, responsável por decisões estratégicas sobre produtividade e custos. Esse perfil evidenciou suas dores — como a dificuldade de monitorar áreas extensas, a demora em identificar problemas e a falta de métricas comparativas confiáveis — e suas necessidades, como ferramentas de monitoramento remoto, relatórios claros e evidências que traduzam dados em recomendações práticas. Nesse contexto, a solução da Effatha se mostra essencial ao oferecer mensuração precisa por imagens de satélite, comparando áreas com e sem tecnologia aplicada, antecipando problemas e fortalecendo a tomada de decisão técnica, garantindo eficiência, sustentabilidade e maior credibilidade ao trabalho do agrônomo.
+&emsp; A construção da persona Lucas Ferreira, engenheiro agrônomo permitiu compreender de forma clara o objetivo da Effatha e como sua solução gera valor no campo, representando um profissional experiente em grandes culturas, responsável por decisões estratégicas sobre produtividade e custos. Esse perfil evidenciou suas dores, como a dificuldade de monitorar áreas extensas, a demora em identificar problemas, a falta de métricas comparativas confiáveis e suas necessidades, como ferramentas de monitoramento remoto, relatórios claros e evidências que traduzam dados em recomendações práticas. Nesse contexto, a solução da Effatha se mostra essencial ao oferecer mensuração precisa por imagens de satélite, comparando áreas com e sem tecnologia aplicada, antecipando problemas e fortalecendo a tomada de decisão técnica, garantindo eficiência, sustentabilidade e maior credibilidade ao trabalho do agrônomo.
