@@ -187,57 +187,57 @@ Esta seção apresenta os requisitos funcionais do MVP de monitoramento agrícol
 
 ### Gráficos Temporais
 
-**RF074** - O sistema deve gerar gráficos de linha para acompanhar a evolução de índices ao longo do tempo.
+**RF073** - O sistema deve gerar gráficos de linha para acompanhar a evolução de índices ao longo do tempo.
 
-**RF075** - O sistema deve permitir ao usuário escolher qual variável agrícola deseja visualizar (ex.: NDVI, biomassa, cobertura vegetal) e em qual intervalo de tempo deseja analisar (ex.: mês, trimestre, ano).
+**RF074** - O sistema deve permitir ao usuário escolher qual variável agrícola deseja visualizar (ex.: NDVI, biomassa, cobertura vegetal) e em qual intervalo de tempo deseja analisar (ex.: mês, trimestre, ano).
 
-**RF076** - O sistema deve permitir exportação dos gráficos em formatos de imagem (PNG, JPEG).
+**RF075** - O sistema deve permitir exportação dos gráficos em formatos de imagem (PNG, JPEG).
 
 ### Estatísticas Descritivas
 
-**RF077** - O sistema deve calcular estatísticas descritivas básicas (média, mínimo, máximo, desvio padrão) para cada índice analisado.
+**RF076** - O sistema deve calcular estatísticas descritivas básicas (média, mínimo, máximo, desvio padrão) para cada índice analisado.
 
-**RF078** - O sistema deve apresentar os resultados das estatísticas em tabelas de fácil interpretação.
+**RF077** - O sistema deve apresentar os resultados das estatísticas em tabelas de fácil interpretação.
 
 ### Exportação de Dados
 
-**RF079** - O sistema deve permitir exportação de relatórios completos em formato PDF.
+**RF078** - O sistema deve permitir exportação de relatórios completos em formato PDF.
 
-**RF080** - O sistema deve oferecer exportação dos dados em planilhas Excel.
+**RF079** - O sistema deve oferecer exportação dos dados em planilhas Excel.
 
-**RF081** - O sistema deve permitir que o usuário escolha o intervalo de tempo e variáveis a incluir no relatório exportado.
+**RF080** - O sistema deve permitir que o usuário escolha o intervalo de tempo e variáveis a incluir no relatório exportado.
 
 ## Funcionalidades de Apoio
 
 ### Busca por Localização
 
-**RF082** - O sistema deve permitir busca de áreas por nome de município, estado ou coordenadas.
+**RF081** - O sistema deve permitir busca de áreas por nome de município, estado ou coordenadas.
 
-**RF083** - O sistema deve centralizar automaticamente o mapa na localização buscada.
+**RF082** - O sistema deve centralizar automaticamente o mapa na localização buscada.
 
-**RF084** - O sistema deve armazenar o histórico das últimas 5 buscas realizadas pelo usuário.
+**RF083** - O sistema deve armazenar o histórico das últimas 5 buscas realizadas pelo usuário.
 
 ### Salvamento de Projetos
 
-**RF085** - O sistema deve permitir salvar projetos de análise contendo áreas, períodos e variáveis selecionadas.
+**RF084** - O sistema deve permitir salvar projetos de análise contendo áreas, períodos e variáveis selecionadas.
 
-**RF086** - O sistema deve permitir abrir projetos salvos anteriormente para continuidade da análise.
+**RF085** - O sistema deve permitir abrir projetos salvos anteriormente para continuidade da análise.
 
-**RF087** - O sistema deve permitir renomear e excluir projetos salvos.
+**RF086** - O sistema deve permitir renomear e excluir projetos salvos.
 
 ### Compartilhamento de Resultados
 
-**RRF088** - O sistema deve permitir exportação de relatórios em PDF.
+**RF087** - O sistema deve permitir exportação de relatórios em PDF.
 
-**RF089** - O sistema deve permitir que o usuário escolha o intervalo de tempo e variáveis agrícolas a incluir nos relatórios.
+**RF088** - O sistema deve permitir que o usuário escolha o intervalo de tempo e variáveis agrícolas a incluir nos relatórios.
 
 ### Help e Documentação
 
-**RF090** - O sistema deve disponibilizar uma seção de ajuda com tutoriais passo a passo.
+**RF089** - O sistema deve disponibilizar uma seção de ajuda com tutoriais passo a passo.
 
-**RF091** - O sistema deve fornecer documentação de uso acessível diretamente na interface.
+**RF090** - O sistema deve fornecer documentação de uso acessível diretamente na interface.
 
-**RF092** - O sistema deve oferecer busca interna na documentação por palavras-chave.
+**RF091** - O sistema deve oferecer busca interna na documentação por palavras-chave.
 
 ---
 
