@@ -177,22 +177,67 @@ Esta seção apresenta os requisitos funcionais do MVP de monitoramento agrícol
 ## Visualizações
 
 ### Mapas Interativos
+**RF069** - O sistema deve exibir mapas que permitam ao usuário explorar áreas agrícolas com movimentação livre e diferentes níveis de zoom.
+
+**RF070** - O sistema deve permitir alternar entre diferentes camadas de visualização (ex.: satélite, NDVI, biomassa, cobertura vegetal).
+
+**RF071** - O sistema deve possibilitar a comparação lado a lado de duas imagens do mesmo local em períodos diferentes.
+
+**RF072** - O sistema deve destacar as áreas selecionadas pelo usuário com cores diferenciadas para facilitar a identificação.
 
 ### Gráficos Temporais
 
+**RF074** - O sistema deve gerar gráficos de linha para acompanhar a evolução de índices ao longo do tempo.
+
+**RF075** - O sistema deve permitir ao usuário escolher qual variável agrícola deseja visualizar (ex.: NDVI, biomassa, cobertura vegetal) e em qual intervalo de tempo deseja analisar (ex.: mês, trimestre, ano).
+
+**RF076** - O sistema deve permitir exportação dos gráficos em formatos de imagem (PNG, JPEG).
+
 ### Estatísticas Descritivas
 
+**RF077** - O sistema deve calcular estatísticas descritivas básicas (média, mínimo, máximo, desvio padrão) para cada índice analisado.
+
+**RF078** - O sistema deve apresentar os resultados das estatísticas em tabelas de fácil interpretação.
+
 ### Exportação de Dados
+
+**RF079** - O sistema deve permitir exportação de relatórios completos em formato PDF.
+
+**RF080** - O sistema deve oferecer exportação dos dados em planilhas Excel.
+
+**RF081** - O sistema deve permitir que o usuário escolha o intervalo de tempo e variáveis a incluir no relatório exportado.
 
 ## Funcionalidades de Apoio
 
 ### Busca por Localização
 
+**RF082** - O sistema deve permitir busca de áreas por nome de município, estado ou coordenadas.
+
+**RF083** - O sistema deve centralizar automaticamente o mapa na localização buscada.
+
+**RF084** - O sistema deve armazenar o histórico das últimas 5 buscas realizadas pelo usuário.
+
 ### Salvamento de Projetos
+
+**RF085** - O sistema deve permitir salvar projetos de análise contendo áreas, períodos e variáveis selecionadas.
+
+**RF086** - O sistema deve permitir abrir projetos salvos anteriormente para continuidade da análise.
+
+**RF087** - O sistema deve permitir renomear e excluir projetos salvos.
 
 ### Compartilhamento de Resultados
 
+**RRF088** - O sistema deve permitir exportação de relatórios em PDF.
+
+**RF089** - O sistema deve permitir que o usuário escolha o intervalo de tempo e variáveis agrícolas a incluir nos relatórios.
+
 ### Help e Documentação
+
+**RF090** - O sistema deve disponibilizar uma seção de ajuda com tutoriais passo a passo.
+
+**RF091** - O sistema deve fornecer documentação de uso acessível diretamente na interface.
+
+**RF092** - O sistema deve oferecer busca interna na documentação por palavras-chave.
 
 ---
 
