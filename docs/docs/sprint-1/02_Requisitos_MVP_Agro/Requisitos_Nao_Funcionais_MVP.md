@@ -186,31 +186,88 @@ Esta seção apresenta os requisitos não funcionais do MVP de monitoramento agr
 
 ### Navegadores Suportados
 
+**RNF073** - O sistema deve ser compatível com os navegadores Google Chrome, Mozilla Firefox, Microsoft Edge e Safari.b
+
+**RNF074** - O sistema deve garantir funcionamento consistente das principais funcionalidades em todos os navegadores suportados.
+
 ### Resoluções de Tela
+
+**RNF075** - O sistema deve ser plenamente utilizável em resoluções de 1366x768 pixels ou superiores.
+
+**RNF076** - Elementos da interface devem se ajustar proporcionalmente em diferentes resoluções sem perda de legibilidade.
 
 ### Dispositivos
 
+**RNF077** - O sistema deve ser acessível em desktops e notebooks como plataformas primárias de uso.
+
+**RNF078** - O sistema deve oferecer suporte funcional em tablets modernos com tela mínima de 10 polegadas.
+
+**RNF079** - Funcionalidades críticas (visualização de mapas, relatórios e estatísticas) devem permanecer utilizáveis em dispositivos móveis, ainda que com interface simplificada.
+
 ### Sistemas Operacionais
+
+**RNF080** - O sistema deve funcionar em ambientes Windows, macOS e distribuições Linux modernas.
+
+**RNF081** - As funcionalidades de exportação de relatórios devem garantir compatibilidade com softwares padrão de mercado (Microsoft Excel, Adobe Acrobat Reader).
 
 ## Confiabilidade
 
 ### Disponibilidade
 
+**RNF082** - O sistema deve estar disponível de forma vitalícia.
+
+**RNF083** - Manutenções programadas devem ser comunicadas com no mínimo 24 horas de antecedência.
+
+
 ### Tratamento de Erros
+
+**RNF084** - O sistema deve registrar logs detalhados de erros para análise e auditoria.
+
+**RNF085** - Mensagens de erro apresentadas ao usuário devem ser claras e evitar exposição de informações técnicas sensíveis.
+
+**RNF086** - O sistema deve continuar operando em modo degradado sempre que possível, mesmo diante de falhas parciais.
 
 ### Recuperação de Falhas
 
+**RNF087** - O sistema deve restabelecer automaticamente sua operação após falhas de servidor em até 5 minutos.
+
+**RNF088** - O sistema deve utilizar mecanismos de redundância para evitar perda de dados durante interrupções inesperadas.
+
+**RNF089** - Em caso de falha, operações em andamento devem ser reiniciadas de forma segura sem necessidade de repetição manual pelo usuário.
+
 ### Backup de Dados
+
+**RNF090** - O sistema deve realizar backups automáticos de dados críticos diariamente.
+
+**RNF091** - Os backups devem ser armazenados por um período mínimo de 30 dias.
 
 ## Segurança
 
 ### Proteção de Dados
 
+**RNF092** - Toda comunicação entre cliente e servidor deve ser criptografada via HTTPS.
+
+**RNF093** - Dados sensíveis devem ser protegidos por mecanismos de criptografia no banco de dados.
+
 ### Controle de Acesso
+
+**RNF094** - O sistema deve exigir autenticação de usuário para acesso às áreas restritas.
+
+**RNF095** - O sistema deve implementar controle de permissões baseado em perfis de usuário (ex.: administrador, analista, visitante).
 
 ### Privacidade
 
+**RNF096** - O sistema deve coletar apenas os dados estritamente necessários para sua operação.
+
+**RNF097** - O usuário deve ser informado sobre a finalidade da coleta de dados pessoais.
+
+**RNF098** - O sistema deve permitir que usuários solicitem exclusão de seus dados pessoais.
+
 ### Conformidade
+
+**RNF099** - O sistema deve estar em conformidade com a Lei Geral de Proteção de Dados (LGPD) no Brasil.
+
+**RNF100** - Auditorias de conformidade devem ser realizadas periodicamente para validar aderência às normas vigentes.
 
 ---
 
