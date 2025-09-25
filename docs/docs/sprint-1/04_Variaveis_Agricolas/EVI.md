@@ -1,6 +1,6 @@
 ---
 sidebar_position: 2
-slug: /sprint-2/variaveis/evi
+slug: /sprint-1/variaveis/evi
 description: "Enhanced Vegetation Index - definição e aplicações"
 ---
 
@@ -14,9 +14,7 @@ O EVI (Enhanced Vegetation Index) é um índice espectral desenvolvido para melh
 ### Fórmula de Cálculo
 A fórmula mais comum do EVI é [[1]](#leitura-complementar):  
 
-```math
-\text{EVI} = G \times \frac{(NIR - RED)}{(NIR + C_1 \times RED - C_2 \times BLUE + L)}
-```
+EVI = G * (NIR - RED) / (NIR + C_1 * RED - C_2 * BLUE + L)
 
 Na qual:  
 - **NIR** = refletância no infravermelho próximo  
@@ -124,4 +122,6 @@ EVI apresenta correlação mais linear com parâmetros biofísicos, como biomass
 - Índices de concordância estatística (ex.: Willmott’s Index).  
 
 ## Leitura complementar
-1. L, J. Enhanced Vegetation Index (EVI): A Modern Approach to Vegetation Health Monitoring - Geospatial Artificial Intelligence | GeoAI. Disponível em: <https://geoai.au/enhanced-vegetation-index-evi-a-modern-approach-to-vegetation-health-monitoring/>.
+1. L, J. *Enhanced Vegetation Index (EVI): A Modern Approach to Vegetation Health Monitoring - Geospatial Artificial Intelligence | GeoAI*.  
+   Disponível em: [https://geoai.au/enhanced-vegetation-index-evi-a-modern-approach-to-vegetation-health-monitoring/](https://geoai.au/enhanced-vegetation-index-evi-a-modern-approach-to-vegetation-health-monitoring/).
+

@@ -1,6 +1,6 @@
 ---
 sidebar_position: 3
-slug: /sprint-2/variaveis/biomassa
+slug: /sprint-1/variaveis/biomassa
 description: "Estimativa de biomassa via sensoriamento remoto"
 ---
 
@@ -102,7 +102,7 @@ Cobertura de nuvens pode prejudicar a aquisição de imagens ópticas. Sensores 
 Modelos podem ter desempenho variável entre culturas (grãos, cana-de-açúcar, florestas).
 
 ### Resolução Espacial
-A precisão depende da resolução do sensor: MODIS (250 m), Sentinel-2 (10–20 m), drones (<10 cm).
+A precisão depende da resolução do sensor: MODIS (250 m), Sentinel-2 (10–20 m), drones (`<10 cm`).
 
 ### Variabilidade Temporal
 Diferenças no ciclo fenológico podem gerar erros se não forem considerados.

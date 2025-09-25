@@ -1,6 +1,6 @@
 ---
 sidebar_position: 1
-slug: /sprint-2/arquitetura/tecnica
+slug: /sprint-1/arquitetura/tecnica
 description: "Arquitetura técnica básica da solução"
 ---
 

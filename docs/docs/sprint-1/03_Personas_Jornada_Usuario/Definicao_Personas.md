@@ -1,6 +1,6 @@
 ---
 sidebar_position: 1
-slug: /sprint-2/personas/definicao
+slug: /sprint-1/personas/definicao
 description: "Definição das personas do sistema"
 ---
 
@@ -14,10 +14,15 @@ description: "Definição das personas do sistema"
 
 &emsp; Foi criada uma persona para representar o perfil de Engenheiro Agrônomo, profissional que desempenha papel central na adoção e utilização da tecnologia proposta.
 
-<div align="center"> <sub> Figura 01: Persona Lucas Ferreira - Engenheiro Agrônomo </sub>
+<div align="center">
 
-![](../../../static/img/persona_LucasFerreira.png)
-<sup> Fonte: Autoral, 2025</sup> </div> <br>
+**Figura 01 – Persona Lucas Ferreira - Engenheiro Agrônomo**  
+
+![](../../../static/img/persona_LucasFerreira.png)  
+
+<sup>Fonte: Autoral, 2025</sup>  
+
+</div>
 
 **Sobre:** Lucas Ferreia é um engenheiro agrônomo de 34 anos que trabalha há mais de 9 anos no setor agrícola. Atua em uma grande fazenda no Centro-Oeste brasileiro e também presta consultoria para pequenos produtores da região. Tem perfil analítico e prático, sempre buscando soluções que tragam resultados claros no campo. Ele acredita que a tecnologia é uma aliada essencial para enfrentar os desafios do agronegócio, mas só aposta em ferramentas que realmente comprovam impacto econômico e ambiental.
 
