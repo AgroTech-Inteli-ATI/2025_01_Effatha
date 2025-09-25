@@ -1,69 +1,82 @@
 ---
 sidebar_position: 4
-slug: /sprint-2/personas/jornada-cientista
+slug: /sprint-1/personas/jornada-cientista
 description: "Jornada do usuário para a persona Cientista/Pesquisador"
 ---
 
-# Jornada do Cientista/Pesquisador
+# Jornada do Usuário
 
-## Contexto da Jornada
+## Introdução
 
-### Projeto de Pesquisa
+&emsp; Nesta seção, foi elaborada a jornada do usuário para compreender em detalhes como se dará a interação com a aplicação proposta. A partir do perfil da persona principal,o engenheiro agrônomo responsável por validar e adotar a tecnologia, estruturou-se o caminho percorrido dentro da solução, desde o primeiro contato até a geração de relatórios finais.
 
-### Hipóteses a Validar
+&emsp; O objetivo é entender não apenas as ações realizadas, mas também os objetivos, pensamentos, dores e emoções vivenciados em cada etapa. Com o objetivo de projetar a entrega de maior valor para o usuário.
 
-### Metodologia
+### Jornada do Usuário: Engenheiro Agrônomo
 
-### Cronograma
+&emsp; A seguir, estão descritos os quatro principais estágios da jornada, acompanhados dos elementos que orientam a experiência do usuário.
 
-## Etapas da Jornada
+<div align="center">
 
-### Definição da Área de Estudo
+**Figura 01 – Jornada do usuário Lucas Ferreira - Engenheiro Agrônomo**
 
-### Coleta de Dados Históricos
+![](../../../static/img/persona_LucasFerreira.png)
 
-### Análise Temporal
+<sup>Fonte: Autoral, 2025</sup>
 
-### Validação de Resultados
+</div>
 
-### Publicação
 
-## Pontos de Contato
+### Estágio 01: Selecionar a área de interesse
 
-### Ferramentas de Análise
+**Objetivo:** Definir claramente qual área agrícola será analisada.
 
-### Bases de Dados
+**Ações:** Navega no mapa interativo, delimita a área com ferramentas de seleção e confirma a escolha.
 
-### Exportação de Dados
+**Pensamentos:** “Preciso garantir que estou selecionando exatamente a área correta.”
 
-### Documentação Técnica
+**Dores:** Insegurança sobre a precisão do mapa, dificuldade em identificar limites exatos da propriedade.
 
-## Experiência do Usuário
+**Emoções:** Curiosidade e leve ansiedade por estar iniciando a análise.
 
-### Precisão dos Dados
+### Estágio 02: Comparar o desenvolvimento histórico
 
-### Facilidade de Extração
+**Objetivo:** Avaliar se a área com a tecnologia aplicada apresenta diferença em relação ao histórico ou a áreas de controle.
 
-### Formatos Compatíveis
+**Ações:** Seleciona datas passadas, aplica filtros, compara visualmente os resultados entre áreas.
 
-### Reprodutibilidade
+**Pensamentos:** “Será que consigo visualizar claramente o impacto da tecnologia?”
 
-## Oportunidades de Melhoria
+**Dores:** Carregamento lento das imagens, confusão ao escolher períodos de comparação, dificuldade em interpretar pequenas diferenças.
 
-### APIs para Integração
+**Emoções:** Expectativa e foco nos detalhes, mas com risco de frustração se a análise não ficar clara.
 
-### Metadados Completos
+### Estágio 03: Visualizar métricas geradas automaticamente
 
-### Ferramentas Avançadas
+**Objetivo:** Obter dados concretos que traduzam a análise visual em números confiáveis.
 
-### Documentação Científica
+**Ações:** Explora dashboards com índices de vegetação, gráficos temporais e mapas de calor.
 
-## Métricas de Sucesso
+**Pensamentos:** “Esses números realmente mostram a diferença? Dá para confiar nesses indicadores?”
 
-### Qualidade dos Dados
+**Dores:** Excesso de informações técnicas, dificuldade em interpretar indicadores muito complexos.
 
-### Eficiência na Pesquisa
+**Emoções:** Confiança quando os dados confirmam hipóteses; insegurança caso os gráficos pareçam difíceis de compreender.
 
-### Reprodutibilidade
+### Estágio 04: Gerar relatórios personalizados
 
-### Impacto Científico
+**Objetivo:** Criar materiais claros e persuasivos para compartilhar com investidores e parceiros.
+
+**Ações:** Seleciona métricas relevantes, organiza informações e exporta relatórios em formatos como PDF ou PowerPoint.
+
+**Pensamentos:** “Esse relatório mostra de forma convincente o valor da tecnologia?”
+
+**Dores:** Preocupação com o design e clareza do relatório; dificuldade em adaptar para diferentes públicos (técnico x investidor).
+
+**Emoções:** Satisfação e orgulho quando o relatório é impactante; alívio por ter material pronto para apresentação.
+
+&emsp; A construção da jornada do usuário permite visualizar de forma clara como o engenheiro agrônomo interage com a aplicação em cada fase, evidenciando suas necessidades e pontos de atenção. Dessa forma, a solução proposta se mostra uma ferramenta prática e confiável capaz de aumentanr a confiança na tomada de decisão baseada em dados de imagens de satélite.
+
+
+
+
