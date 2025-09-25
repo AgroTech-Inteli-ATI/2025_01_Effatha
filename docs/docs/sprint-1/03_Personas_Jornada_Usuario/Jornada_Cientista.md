@@ -1,6 +1,6 @@
 ---
 sidebar_position: 4
-slug: /sprint-2/personas/jornada-cientista
+slug: /sprint-1/personas/jornada-cientista
 description: "Jornada do usuário para a persona Cientista/Pesquisador"
 ---
 
@@ -16,10 +16,16 @@ description: "Jornada do usuário para a persona Cientista/Pesquisador"
 
 &emsp; A seguir, estão descritos os quatro principais estágios da jornada, acompanhados dos elementos que orientam a experiência do usuário.
 
-<div align="center"> <sub> Figura 01: Jornada do usuário Lucas Ferreira - Engenheiro Agrônomo </sub>
+<div align="center">
+
+**Figura 01 – Jornada do usuário Lucas Ferreira - Engenheiro Agrônomo**
 
 ![](../../../static/img/persona_LucasFerreira.png)
-<sup> Fonte: Autoral, 2025</sup> </div> <br>
+
+<sup>Fonte: Autoral, 2025</sup>
+
+</div>
+
 
 ### Estágio 01: Selecionar a área de interesse
 

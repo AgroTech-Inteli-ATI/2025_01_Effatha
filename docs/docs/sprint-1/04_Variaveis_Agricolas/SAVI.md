@@ -1,6 +1,6 @@
 ---
 sidebar_position: 5
-slug: /sprint-2/variaveis/savi
+slug: /sprint-1/variaveis/savi
 description: "Soil-Adjusted Vegetation Index - definição e aplicações"
 ---
 
@@ -12,9 +12,8 @@ description: "Soil-Adjusted Vegetation Index - definição e aplicações"
 O SAVI (Soil-Adjusted Vegetation Index) é um índice espectral derivado do NDVI, projetado para reduzir a influência do solo em áreas com vegetação esparsa. Ele inclui um fator de ajuste do solo (L) que minimiza o efeito do solo exposto sobre o valor do índice.
 
 ### Fórmula de Cálculo
-```math
-\text{SAVI} = \frac{(NIR - RED) \cdot (1 + L)}{(NIR + RED + L)}
-```
+
+SAVI = ((NIR - RED) * (1 + L)) / (NIR + RED + L)
 
 Na qual $L$ é o fator de correção do solo, geralmente entre 0 e 1 (tipicamente 0,5 em vegetação moderada).
 
@@ -110,5 +109,8 @@ Depende do fator L escolhido, qualidade do sensor e pré-processamento.
 Robusto em áreas de vegetação esparsa, especialmente quando combinado com NDVI e EVI.
 
 ## Leitura complementar
-1. WIKIPEDIA CONTRIBUTORS. Soil-adjusted vegetation index. Disponível em: <https://en.wikipedia.org/wiki/Soil-adjusted_vegetation_index>.
-2. USGS. Landsat Soil Adjusted Vegetation Index | U.S. Geological Survey. Disponível em: <https://www.usgs.gov/landsat-missions/landsat-soil-adjusted-vegetation-index>.
+1. WIKIPEDIA CONTRIBUTORS. *Soil-adjusted vegetation index*.  
+   Disponível em: [https://en.wikipedia.org/wiki/Soil-adjusted_vegetation_index](https://en.wikipedia.org/wiki/Soil-adjusted_vegetation_index).
+
+2. USGS. *Landsat Soil Adjusted Vegetation Index | U.S. Geological Survey*.  
+   Disponível em: [https://www.usgs.gov/landsat-missions/landsat-soil-adjusted-vegetation-index](https://www.usgs.gov/landsat-missions/landsat-soil-adjusted-vegetation-index).

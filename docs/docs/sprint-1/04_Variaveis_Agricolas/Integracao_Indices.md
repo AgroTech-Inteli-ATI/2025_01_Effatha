@@ -1,6 +1,6 @@
 ---
 sidebar_position: 6
-slug: /sprint-2/variaveis/integracao
+slug: /sprint-1/variaveis/integracao
 description: "Integração e análise conjunta dos índices agrícolas"
 ---
 

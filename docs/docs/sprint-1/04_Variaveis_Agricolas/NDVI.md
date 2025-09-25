@@ -1,6 +1,6 @@
 ---
 sidebar_position: 1
-slug: /sprint-2/variaveis/ndvi
+slug: /sprint-1/variaveis/ndvi
 description: "Normalized Difference Vegetation Index - definição e aplicações"
 ---
 
@@ -12,9 +12,7 @@ description: "Normalized Difference Vegetation Index - definição e aplicaçõe
 O **NDVI (Normalized Difference Vegetation Index)** é um índice espectral usado para medir a "saúde" e o vigor da vegetação. Ele se baseia na diferença de refletância entre o vermelho (RED), que é absorvido pela clorofila, e o infravermelho próximo (NIR), que é fortemente refletido pelas folhas.
 
 ### Fórmula de Cálculo
-```math
-\text{NDVI} = \frac{(NIR - RED)}{(NIR + RED)}
-```
+NDVI = (NIR - RED) / (NIR + RED)
 
 ### Bandas Espectrais Utilizadas
 - NIR (Infravermelho Próximo) 
@@ -78,7 +76,7 @@ Permite antecipar a estimativa de rendimento das culturas.
 - MODIS: 250-500 m.  
 - Sentinel-2: 10-20 m.  
 - Landsat: 30 m.  
-- Drones: <10 cm.  
+- Drones: `<10 cm`.  
 
 ### Processamento de Dados
 - Correção atmosférica e radiométrica.  
@@ -114,8 +112,11 @@ Depende da qualidade do sensor, do pré-processamento e da calibração regional
 NDVI é considerado um índice robusto, tendo décadas de validação em diferentes biomas e aplicações agrícolas.
 
 ## Leitura complementar
-1. KATERYNA SERGIEIEVA. NDVI Explicado: Como O Índice Ajuda A Monitorar A Saúde Das Lavouras. Disponível em: <https://eos.com/pt/blog/indice-de-vegetacao-por-diferenca-normalizada-ou-ndvi/>.
+1. KATERYNA SERGIEIEVA. *NDVI Explicado: Como O Índice Ajuda A Monitorar A Saúde Das Lavouras*.  
+   Disponível em: [https://eos.com/pt/blog/indice-de-vegetacao-por-diferenca-normalizada-ou-ndvi/](https://eos.com/pt/blog/indice-de-vegetacao-por-diferenca-normalizada-ou-ndvi/).
 
-2. Índice de estado da vegetação (NDVI) | Observatório de Clima e Saúde. Disponível em: <https://climaesaude.icict.fiocruz.br/indicador/indice-de-estado-da-vegetacao-ndvi>.
+2. *Índice de estado da vegetação (NDVI) | Observatório de Clima e Saúde*.  
+   Disponível em: [https://climaesaude.icict.fiocruz.br/indicador/indice-de-estado-da-vegetacao-ndvi](https://climaesaude.icict.fiocruz.br/indicador/indice-de-estado-da-vegetacao-ndvi).
 
-3. GABRIELA. O que é NDVI? Descubra sua importância no campo. Disponível em: <https://digifarmz.com/o-que-e-ndvi/>.
+3. GABRIELA. *O que é NDVI? Descubra sua importância no campo*.  
+   Disponível em: [https://digifarmz.com/o-que-e-ndvi/](https://digifarmz.com/o-que-e-ndvi/).

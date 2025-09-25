@@ -1,6 +1,6 @@
 ---
 sidebar_position: 4
-slug: /sprint-2/variaveis/cobertura-vegetal
+slug: /sprint-1/variaveis/cobertura-vegetal
 description: "Análise de cobertura vegetal via satélite"
 ---
 
