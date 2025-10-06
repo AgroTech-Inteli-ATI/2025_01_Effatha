@@ -12,19 +12,13 @@ Este documento apresenta a modelagem do banco de dados para o sistema Effatha, u
 
 ### 1. Tabela LOGIN
 
-Armazena informações dos usuários do sistema, incluindo credenciais de acesso e dados de contato.
+Armazena informações dos projetos.
 
 | Campo | Tipo | Restrições | Descrição |
 |-------|------|------------|-----------|
 | `id` | INTEGER | PRIMARY KEY | Identificador único do usuário |
-| `nome` | VARCHAR(100) | NOT NULL | Nome completo do usuário |
-| `senha` | VARCHAR(255) | NOT NULL | Hash da senha criptografada |
-| `email` | VARCHAR(150) | UNIQUE, NOT NULL | E-mail de login (único no sistema) |
-| `telefone` | VARCHAR(20) | - | Número de contato |
+| `responsável` | VARCHAR(100) | NOT NULL | Nome do usuário |
 | `data_criacao` | DATETIME | DEFAULT CURRENT_TIMESTAMP | Data e hora do registro do usuário |
-
-**Índices:**
-- `idx_login_email` em `email` para otimização de consultas de autenticação
 
 ### 2. Tabela AREA
 
@@ -163,7 +157,6 @@ CREATE TABLE historico (
 );
 
 -- Criação de índices
-CREATE INDEX idx_login_email ON login(email);
 CREATE INDEX idx_area_municipio_estado ON area(municipio, estado);
 CREATE INDEX idx_relatorio_area_id ON relatorio(area_id);
 CREATE INDEX idx_relatorio_usuario_id ON relatorio(usuario_id);
@@ -172,13 +165,6 @@ CREATE INDEX idx_relatorio_periodo ON relatorio(periodo_inicio, periodo_fim);
 CREATE INDEX idx_historico_relatorio_id ON historico(relatorio_id);
 CREATE INDEX idx_historico_data_registro ON historico(data_registro);
 ```
-
-## Segurança
-
-### Medidas Implementadas
-
-- **Senhas Criptografadas**: Campo `senha` armazena apenas hash
-- **Email Único**: Previne duplicação de contas
 
 ## Integração com a Aplicação
 
