@@ -92,8 +92,8 @@ Registra eventos importantes, alertas e anomalias detectadas nas análises.
 
 ### Cardinalidade
 
-- **Login → Relatório**: Um para Muitos (1:N)
-  - Um usuário pode ter múltiplos relatórios
+- **Projeto → Relatório**: Um para Muitos (1:N)
+  - Um projeto pode ter múltiplos relatórios
   
 - **Área → Relatório**: Um para Muitos (1:N)
   - Uma área pode ter múltiplas análises ao longo do tempo
@@ -109,13 +109,10 @@ Registra eventos importantes, alertas e anomalias detectadas nas análises.
 ## Script de Criação (SQL)
 
 ```sql
--- Tabela LOGIN
-CREATE TABLE login (
+-- Tabela PROJETO
+CREATE TABLE projeto (
     id SERIAL PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    senha VARCHAR(255) NOT NULL,
-    email VARCHAR(150) UNIQUE NOT NULL,
-    telefone VARCHAR(20),
+    responsavel VARCHAR(100) NOT NULL,
     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -132,7 +129,7 @@ CREATE TABLE area (
 CREATE TABLE relatorio (
     id SERIAL PRIMARY KEY,
     area_id INTEGER NOT NULL,
-    usuario_id INTEGER NOT NULL,
+    projeto_id INTEGER NOT NULL,
     data DATE NOT NULL,
     safra VARCHAR(50),
     imagens TEXT,
@@ -151,8 +148,8 @@ CREATE TABLE relatorio (
     observacoes TEXT,
     CONSTRAINT fk_area FOREIGN KEY (area_id) 
         REFERENCES area(id) ON DELETE RESTRICT,
-    CONSTRAINT fk_usuario FOREIGN KEY (usuario_id) 
-        REFERENCES login(id) ON DELETE RESTRICT
+    CONSTRAINT fk_projeto FOREIGN KEY (projeto_id) 
+        REFERENCES projeto(id) ON DELETE RESTRICT
 );
 
 -- Tabela HISTORICO
