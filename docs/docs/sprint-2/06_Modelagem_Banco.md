@@ -2,7 +2,7 @@
 
 ## Visão Geral
 
-Este documento apresenta a modelagem do banco de dados para o sistema Effatha, uma plataforma de monitoramento agrícola via análise de imagens de satélite. O modelo foi desenvolvido para suportar as funcionalidades principais do MVP, incluindo gestão de usuários, análise de áreas agrícolas, geração de relatórios com índices de vegetação e manutenção de histórico de análises.
+Este documento apresenta a modelagem do banco de dados para o sistema Effatha, uma plataforma de monitoramento agrícola via análise de imagens de satélite. O modelo foi desenvolvido para suportar as funcionalidades principais do MVP, incluindo gestão de projetos, análise de áreas agrícolas, geração de relatórios com índices de vegetação e manutenção de histórico de análises.
 
 ## Diagrama de Entidade-Relacionamento
 
