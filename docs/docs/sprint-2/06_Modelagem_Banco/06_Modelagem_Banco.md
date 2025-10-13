@@ -1,3 +1,9 @@
+---
+sidebar_position: 1
+slug: /sprint-2/banco_de_dados/modelagem
+description: "Modelagem do banco de dados, incluindo diagramas ER, definição de tabelas e relacionamentos."
+---
+
 # Modelagem de Banco de Dados - Effatha
 
 ## Visão Geral
