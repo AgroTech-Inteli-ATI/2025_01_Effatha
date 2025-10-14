@@ -32,7 +32,7 @@ Autenticação e inicialização no início do notebook:
 ```python
 import ee
 ee.Authenticate()                 # abrirá o navegador para login
-ee.Initialize(project='smooth-grid-474216-k6')
+ee.Initialize(project='')
 ```
 
 ## Metodologia
