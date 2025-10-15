@@ -1,0 +1,8 @@
+{
+  "label": "Teste do Google Earth Engine",
+  "position": 7,
+  "link": {
+    "type": "generated-index",
+    "description": "Testando como funciona a API do google earth engine e realizando o cálculo de alguns indicadores."
+  }
+}
