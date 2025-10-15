@@ -2,7 +2,7 @@
 sidebar_position: 2
 slug: /sprint-2/prototipo/prototipo_inicial
 description: "Proposta de Front-End com protótipo de alta fidelidade"
------------------------------------------
+---
 
 # Protótipo Front-End
 
