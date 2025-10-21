@@ -40,10 +40,11 @@ Gerencia as propriedades rurais e áreas de interesse para análise.
 | Campo | Tipo | Restrições | Descrição |
 |-------|------|------------|-----------|
 | `id` | UUID | PRIMARY KEY | Identificador único da área |
-| `coordenada` | VARCHAR(100) | NOT NULL | Coordenadas geográficas da propriedade |
+| `coordenada` | JSONB | NOT NULL | Coordenadas geográficas da propriedade |
 | `municipio` | VARCHAR(100) | NOT NULL | Município de localização |
 | `estado` | VARCHAR(50) | NOT NULL | Estado (UF) |
 | `nome_area` | VARCHAR(100) | NOT NULL | Nome da propriedade ou identificação |
+| `cultura predominante` | VARCHAR(100) | NOT NULL | Nome da cultura principal |
 
 **Índices:**
 
@@ -71,7 +72,6 @@ Tabela central que armazena os resultados das análises de imagens satelitais e 
 | `rendvi` | DECIMAL(10,6) | - | Índice RENDVI (Red Edge NDVI) |
 | `cobertura_vegetal` | DECIMAL(5,2) | - | Percentual de cobertura vegetal |
 | `biomassa` | DECIMAL(10,2) | - | Biomassa estimada (ton/ha) |
-| `produtividade` | DECIMAL(10,2) | - | Produtividade potencial estimada |
 | `periodo_inicio` | DATE | NOT NULL | Data inicial do período de análise |
 | `periodo_fim` | DATE | NOT NULL | Data final do período de análise |
 | `observacoes` | TEXT | - | Campo livre para anotações do usuário |
