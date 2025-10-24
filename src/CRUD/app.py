@@ -21,10 +21,28 @@ GET_ALL_PROPRIEDADE="""
 SELECT * FROM propriedade;
 """
 
+GET_PROPRIEDADE_BY_ID="""
+SELECT * FROM propriedade
+WHERE id = %s
+"""
+
+DELETE_ALL_PROPRIEDADE="""
+DELETE FROM propriedade;
+"""
+
 DELETE_PROPRIEDADE_BY_ID="""
 DELETE FROM propriedade
 WHERE id = %s
 """
+
+UPDATE_PROPRIEDADE = """
+UPDATE propriedade
+SET responsavel = %s,
+nome = %s
+WHERE id = %s
+RETURNING id;
+"""
+
 
 CREATE_AREA_TABLE="""
 CREATE TABLE IF NOT EXISTS area (
@@ -50,10 +68,20 @@ GET_ALL_AREA="""
 SELECT * FROM area 
 """
 
+GET_AREA_BY_ID="""
+SELECT * FROM area
+WHERE id = %s
+"""
+
+DELETE_ALL_AREA="""
+DELETE FROM area;
+"""
+
 DELETE_AREA_BY_ID="""
 DELETE FROM area
 WHERE id = %s
 """
+
 
 CREATE_METRICAS_TABLE="""
 CREATE TABLE IF NOT EXISTS metricas  (
@@ -95,6 +123,15 @@ GET_ALL_METRICAS="""
 SELECT * FROM metricas 
 """
 
+GET_METRICAS_BY_ID="""
+SELECT * FROM metricas
+WHERE id = %s
+"""
+
+DELETE_ALL_METRICAS="""
+DELETE FROM metricas;
+"""
+
 DELETE_METRICAS_BY_ID="""
 DELETE FROM metricas
 WHERE id = %s
@@ -112,7 +149,7 @@ def get_all_propriedade():
     with connection:
         with connection.cursor() as cursor:
             cursor.execute(GET_ALL_PROPRIEDADE)
-            propriedades = cursor.fetchall()
+            propriedades = cursor.fetchone()
             return {"propriedades": propriedades}
     
 @app.get("/api/area")
@@ -120,7 +157,7 @@ def get_all_area():
     with connection:
         with connection.cursor() as cursor:
             cursor.execute(GET_ALL_AREA)
-            propriedades = cursor.fetchall()
+            propriedades = cursor.fetchone()
             return {"area": propriedades}
 
 @app.get("/api/metricas")
@@ -203,25 +240,86 @@ def create_metricas():
 
     return {"id": metrica_id, "message": f"Métricas da área {area_id} criadas com sucesso!"}, 201
 
-# Rotas DELETE
+# Rotas DELETE ALL
+@app.delete("/api/propriedade")
+def delete_propriedade():
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute(DELETE_ALL_PROPRIEDADE)
+    return {"message": "Todas as propriedades foram apagadas com sucesso!"}
+
+@app.delete("/api/area")
+def delete_area():
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute(DELETE_ALL_AREA)
+    return {"message": " Todas as áreas foram apagadas com sucesso!"}
+
+@app.delete("/api/metricas")
+def delete_metricas():
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute(DELETE_ALL_METRICAS)
+    return {"message": f"Todas as Metricas foram apagada com sucesso!"}
+
+# Rotas DELETE BY ID
 @app.delete("/api/propriedade/<int:id_propriedade>")
-def delete_propriedade(id_propriedade):
+def delete_propriedade_by_id(id_propriedade):
     with connection:
         with connection.cursor() as cursor:
             cursor.execute(DELETE_PROPRIEDADE_BY_ID, (id_propriedade,))
     return {"message": f"Propriedade {id_propriedade} apagada com sucesso!"}
 
 @app.delete("/api/area/<int:id_area>")
-def delete_area(id_area):
+def delete_area_by_id(id_area):
     with connection:
         with connection.cursor() as cursor:
             cursor.execute(DELETE_AREA_BY_ID, (id_area,))
     return {"message": f"Area {id_area} apagada com sucesso!"}
 
 @app.delete("/api/metricas/<int:id_metricas>")
-def delete_metricas(id_metricas):
+def delete_metricas_by_id(id_metricas):
     with connection:
         with connection.cursor() as cursor:
             cursor.execute(DELETE_METRICAS_BY_ID, (id_metricas,))
     return {"message": f"Metricas {id_metricas} apagada com sucesso!"}
+
+# Rotas GET BY ID
+@app.get("/api/propriedade/<int:id_propriedade>")
+def get_propriedade_by_id(id_propriedade):
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute(GET_PROPRIEDADE_BY_ID, (id_propriedade,))
+            propriedades = cursor.fetchall()
+            return {"propriedades": propriedades}
+
+@app.get("/api/area/<int:id_area>")
+def get_area_by_id(id_area):
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute(GET_AREA_BY_ID, (id_area,))
+            propriedades = cursor.fetchall()
+            return {"propriedades": propriedades}
+        
+@app.get("/api/metricas/<int:id_metricas>")
+def get_metricas_by_id(id_metricas):
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute(GET_METRICAS_BY_ID, (id_metricas,))
+            propriedades = cursor.fetchall()
+            return {"propriedades": propriedades}
+        
+# Rotas UPDATES
+
+@app.put("/api/propriedade/<int: id_propriedade>")
+def update_propriedade(id_pripriedade):
+    data = request.get_json()
+    responsavel = data.get("responsavel")
+    nome = data.get("nome")
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute(UPDATE_PROPRIEDADE, (responsavel, nome, id))
+            row = cursor.fetchone()
+    return {"id": row[0], "message": f"Propriedade {id} atualizada com sucesso!"}
+
 
