@@ -311,15 +311,15 @@ def get_metricas_by_id(id_metricas):
         
 # Rotas UPDATES
 
-@app.put("/api/propriedade/<int: id_propriedade>")
-def update_propriedade(id_pripriedade):
+@app.put("/api/propriedade/<int:id_propriedade>")
+def update_propriedade(id_propriedade):
     data = request.get_json()
     responsavel = data.get("responsavel")
     nome = data.get("nome")
     with connection:
         with connection.cursor() as cursor:
-            cursor.execute(UPDATE_PROPRIEDADE, (responsavel, nome, id))
+            cursor.execute(UPDATE_PROPRIEDADE, (responsavel, nome, id_propriedade,))
             row = cursor.fetchone()
-    return {"id": row[0], "message": f"Propriedade {id} atualizada com sucesso!"}
+    return {"id": row[0], "message": f"Propriedade {id_propriedade} atualizada com sucesso!"}
 
 
