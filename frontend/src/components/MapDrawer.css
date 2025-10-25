@@ -1,0 +1,44 @@
+/* Ajustes de z-index para o mapa Leaflet */
+.leaflet-container {
+  z-index: 0 !important;
+}
+
+.leaflet-pane {
+  z-index: auto !important;
+}
+
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 999 !important;
+}
+
+.leaflet-control-zoom {
+  z-index: 999 !important;
+}
+
+.leaflet-control-attribution {
+  z-index: 999 !important;
+}
+
+/* Garantir que elementos fora do mapa tenham z-index maior */
+.map-overlay-info {
+  z-index: 1100 !important;
+  position: relative;
+}
+
+/* Popup do marcador deve ficar acima de tudo */
+.leaflet-popup {
+  z-index: 2000 !important;
+}
+
+.leaflet-popup-pane {
+  z-index: 2000 !important;
+}
+
+.custom-popup .leaflet-popup-content-wrapper {
+  z-index: 2001 !important;
+}
+
+.leaflet-popup-content {
+  z-index: 2001 !important;
+}
