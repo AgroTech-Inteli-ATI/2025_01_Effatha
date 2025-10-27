@@ -27,6 +27,11 @@ Armazena informações das propriedades que serão monitoradas.
 | `responsavel` | VARCHAR(100) | NOT NULL | Nome do responsável pela propriedade |
 | `nome` | VARCHAR(100) | NOT NULL | Nome da propriedade |
 
+**Índices:**
+- `idx_propriedade_nome` em `nome` para buscas por nome do projeto
+- `idx_propriedade_responsavel` em `responsavel` para buscas por responsável
+- `idx_propriedade_data_criacao` em `data_criacao` para ordenação temporal
+
 ### 2. Tabela AREA
 
 Gerencia asáreas de interesse para análise.
@@ -43,6 +48,11 @@ Gerencia asáreas de interesse para análise.
 | `data_criacao` | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP | Data e hora de criação do registro |
 | `imagens` | TEXT | — | URLs ou caminhos das imagens associadas à área |
 | `observacoes` | TEXT | — | Observações adicionais sobre a área |
+
+**Índices:**
+- `idx_area_municipio_estado` em `(municipio, estado)` para buscas por localização
+- `idx_area_nome` em `nome_area` 
+
 
 ### 5. Tabela MÉTRICAS
 
@@ -86,17 +96,6 @@ Armazena os valores calculados das métricas espectrais e índices de vegetaçã
 
 - `PRIMARY KEY` em `id`  
 - `idx_relatorio_metrica_id` em `relatorio(metrica_id)` — acelera consultas e *joins* entre relatórios e métricas
-- `idx_projeto_nome` em `nome` para buscas por nome do projeto
-- `idx_projeto_responsavel` em `responsavel` para buscas por responsável
-- `idx_projeto_data_criacao` em `data_criacao` para ordenação temporal
-- `idx_area_municipio_estado` em `(municipio, estado)` para buscas por localização
-- `idx_area_nome` em `nome_area` 
-- `idx_relatorio_projeto_id` em `projeto_id`
-- `idx_relatorio_area_id` em `area_id`
-- `idx_relatorio_data_criacao` em `data`
-- `idx_relatorio_periodo` em `(periodo_inicio, periodo_fim)`
-- `idx_historico_relatorio_id` em `relatorio_id`
-- `idx_historico_data_registro` em `data_registro`
 
 ## Relacionamentos
 
@@ -170,17 +169,11 @@ CREATE TABLE IF NOT EXISTS metricas  (
 
 
 -- Criação de índices
-CREATE INDEX idx_projeto_nome ON projeto(nome);
-CREATE INDEX idx_projeto_responsavel ON projeto(responsavel);
-CREATE INDEX idx_projeto_data_criacao ON projeto(data_criacao);
+CREATE INDEX idx_propriedade_nome ON propriedade(nome);
+CREATE INDEX idx_propriedade_responsavel ON propriedade(responsavel);
+CREATE INDEX idx_propriedade_data_criacao ON propriedade(data_criacao);
 CREATE INDEX idx_area_municipio_estado ON area(municipio, estado);
 CREATE INDEX idx_area_nome ON area(nome_area);
-CREATE INDEX idx_relatorio_projeto_id ON relatorio(projeto_id);
-CREATE INDEX idx_relatorio_area_id ON relatorio(area_id);
-CREATE INDEX idx_relatorio_data ON relatorio(data_criacao);
-CREATE INDEX idx_relatorio_periodo ON relatorio(periodo_inicio, periodo_fim);
-CREATE INDEX idx_historico_relatorio_id ON historico(relatorio_id);
-CREATE INDEX idx_historico_data_registro ON historico(data_registro);
 CREATE INDEX idx_area_metrica_id ON area(metrica_id);
 
 
