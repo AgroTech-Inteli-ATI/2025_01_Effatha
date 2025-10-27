@@ -16,136 +16,97 @@ Este documento apresenta a modelagem do banco de dados para o sistema Effatha, u
 
 ## Estrutura das Tabelas
 
-### 1. Tabela PROJETO
+### 1. Tabela PROPRIEDADE
 
-Armazena informações dos projetos de monitoramento agrícola.
+Armazena informações das propriedades que serão monitoradas.
 
 | Campo | Tipo | Restrições | Descrição |
 |-------|------|------------|-----------|
-| `id` | UUID | PRIMARY KEY | Identificador único do projeto |
-| `nome` | VARCHAR(150) | NOT NULL | Nome do projeto |
-| `data_criacao` | DATETIME | NOT NULL | Data e hora de criação do projeto |
-| `responsavel` | VARCHAR(100) | NOT NULL | Nome do responsável pelo projeto |
-
-**Índices:**
-
-- `idx_projeto_nome` em `nome` para buscas por nome do projeto
-- `idx_projeto_responsavel` em `responsavel` para buscas por responsável
-- `idx_projeto_data_criacao` em `data_criacao` para ordenação temporal
+| `id` | SERIAL | PRIMARY KEY | Identificador único da propriedade |
+| `data_criacao` | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP | Data e hora de criação do registro |
+| `responsavel` | VARCHAR(100) | NOT NULL | Nome do responsável pela propriedade |
+| `nome` | VARCHAR(100) | NOT NULL | Nome da propriedade |
 
 ### 2. Tabela AREA
 
-Gerencia as propriedades rurais e áreas de interesse para análise.
+Gerencia asáreas de interesse para análise.
 
 | Campo | Tipo | Restrições | Descrição |
 |-------|------|------------|-----------|
-| `id` | UUID | PRIMARY KEY | Identificador único da área |
-| `coordenada` | JSONB | NOT NULL | Coordenadas geográficas da propriedade |
-| `municipio` | VARCHAR(100) | NOT NULL | Município de localização |
-| `estado` | VARCHAR(50) | NOT NULL | Estado (UF) |
-| `nome_area` | VARCHAR(100) | NOT NULL | Nome da propriedade ou identificação |
-| `cultura predominante` | VARCHAR(100) | NOT NULL | Nome da cultura principal |
-| `periodo_inicio` | DATE | NOT NULL | Data inicial do período de análise |
-| `periodo_fim` | DATE | NOT NULL | Data final do período de análise |
-
-**Índices:**
-
-- `idx_area_municipio_estado` em `(municipio, estado)` para buscas por localização
-- `idx_area_nome` em `nome_area` para buscas por nome
-
-### 3. Tabela RELATORIO
-
-Tabela central que armazena os resultados das análises de imagens satelitais e índices de vegetação calculados.
-
-| Campo | Tipo | Restrições | Descrição |
-|-------|------|------------|-----------|
-| `id` | UUID | PRIMARY KEY | Identificador único do relatório |
-| `projeto_id` | UUID | FOREIGN KEY → Projeto(id) | Referência ao projeto |
-| `area_id` | UUID | FOREIGN KEY → Area(id) | Referência à área analisada |
-| `data_criacao` | DATETIME | NOT NULL | Data da análise |
-| `safra` | VARCHAR(50) | - | Identificação da safra (ex: "Soja 2024/25") |
-| `imagens` | TEXT | - | Caminho/URL das imagens processadas |
-| `observacoes` | TEXT | - | Campo livre para anotações do usuário |
-
-**Índices:**
-
-- `idx_relatorio_projeto_id` em `projeto_id`
-- `idx_relatorio_area_id` em `area_id`
-- `idx_relatorio_data_criacao` em `data`
-- `idx_relatorio_periodo` em `(periodo_inicio, periodo_fim)`
-
-### 4. Tabela HISTORICO
-
-Registra eventos importantes, alertas e anomalias detectadas nas análises.
-
-| Campo | Tipo | Restrições | Descrição |
-|-------|------|------------|-----------|
-| `id` | UUID | PRIMARY KEY | Identificador único do registro |
-| `relatorio_id` | UUID | FOREIGN KEY → Relatorio(id) | Referência ao relatório relacionado |
-| `data_registro` | DATETIME | DEFAULT CURRENT_TIMESTAMP | Data e hora do registro |
-| `alerta` | VARCHAR(255) | - | Descrição da anomalia ou tendência detectada |
-
-**Índices:**
-
-- `idx_historico_relatorio_id` em `relatorio_id`
-- `idx_historico_data_registro` em `data_registro`
+| `id` | SERIAL | PRIMARY KEY | Identificador único da área |
+| `propriedade_id` | INTEGER | FOREIGN KEY REFERENCES propriedade(id) ON DELETE CASCADE | Identificador da propriedade associada |
+| `coordenada` | JSONB | — | Coordenadas geográficas da área em formato JSON |
+| `municipio` | VARCHAR(100) | NOT NULL | Nome do município onde a área está localizada |
+| `estado` | VARCHAR(50) | NOT NULL | Estado onde a área está localizada |
+| `nome_area` | VARCHAR(100) | NOT NULL | Nome da área |
+| `cultura_principal` | VARCHAR(100) | — | Cultura agrícola predominante na área |
+| `data_criacao` | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP | Data e hora de criação do registro |
+| `imagens` | TEXT | — | URLs ou caminhos das imagens associadas à área |
+| `observacoes` | TEXT | — | Observações adicionais sobre a área |
 
 ### 5. Tabela MÉTRICAS
 
 Armazena os valores calculados das métricas espectrais e índices de vegetação obtidos a partir das imagens analisadas. Esses indicadores permitem avaliar o estado da vegetação, biomassa e cobertura vegetal em diferentes áreas monitoradas.
-
 | Campo | Tipo | Restrições | Descrição |
 |-------|------|------------|-----------|
-| `id` | UUID | PRIMARY KEY | Identificador único do conjunto de métricas |
-| `ndvi_mean` | DECIMAL | - | Média do índice de vegetação por diferença normalizada (NDVI) |
-| `ndvi_median` | DECIMAL | - | Mediana dos valores de NDVI |
-| `ndvi_std` | DECIMAL | - | Desvio padrão dos valores de NDVI |
-| `evi_mean` | DECIMAL | - | Média do índice de vegetação aprimorado (EVI) |
-| `evi_median` | DECIMAL | - | Mediana dos valores de EVI |
-| `evi_std` | DECIMAL | - | Desvio padrão dos valores de EVI |
-| `ndwi_mean` | DECIMAL | - | Média do índice de água por diferença normalizada (NDWI) |
-| `ndwi_median` | DECIMAL | - | Mediana dos valores de NDWI |
-| `ndwi_std` | DECIMAL | - | Desvio padrão dos valores de NDWI |
-| `ndmi_mean` | DECIMAL | - | Média do índice de umidade por diferença normalizada (NDMI) |
-| `ndmi_median` | DECIMAL | - | Mediana dos valores de NDMI |
-| `ndmi_std` | DECIMAL | - | Desvio padrão dos valores de NDMI |
-| `gndvi_mean` | DECIMAL | - | Média do índice verde de vegetação por diferença normalizada (GNDVI) |
-| `gndvi_median` | DECIMAL | - | Mediana dos valores de GNDVI |
-| `gndvi_std` | DECIMAL | - | Desvio padrão dos valores de GNDVI |
-| `ndre_mean` | DECIMAL | - | Média do índice de borda do vermelho (NDRE) |
-| `ndre_median` | DECIMAL | - | Mediana dos valores de NDRE |
-| `ndre_std` | DECIMAL | - | Desvio padrão dos valores de NDRE |
-| `rendvi_mean` | DECIMAL | - | Média do índice de vegetação vermelho (RendVI) |
-| `rendvi_median` | DECIMAL | - | Mediana dos valores de RendVI |
-| `rendvi_std` | DECIMAL | - | Desvio padrão dos valores de RendVI |
-| `biomassa` | DECIMAL | - | Estimativa da biomassa vegetal total da área |
-| `cobertura_vegetal` | DECIMAL | - | Percentual estimado de cobertura vegetal da área analisada |
+| `id` | SERIAL | PRIMARY KEY | Identificador único das métricas |
+| `area_id` | INTEGER | NOT NULL, FOREIGN KEY REFERENCES area(id) ON DELETE CASCADE | Identificador da área associada às métricas |
+| `periodo_inicio` | DATE | NOT NULL | Data de início do período de análise |
+| `periodo_fim` | DATE | NOT NULL | Data de término do período de análise |
+| `ndvi_mean` | DECIMAL | — | Valor médio do índice NDVI |
+| `ndvi_median` | DECIMAL | — | Valor mediano do índice NDVI |
+| `ndvi_std` | DECIMAL | — | Desvio padrão do índice NDVI |
+| `evi_mean` | DECIMAL | — | Valor médio do índice EVI |
+| `evi_median` | DECIMAL | — | Valor mediano do índice EVI |
+| `evi_std` | DECIMAL | — | Desvio padrão do índice EVI |
+| `ndwi_mean` | DECIMAL | — | Valor médio do índice NDWI |
+| `ndwi_median` | DECIMAL | — | Valor mediano do índice NDWI |
+| `ndwi_std` | DECIMAL | — | Desvio padrão do índice NDWI |
+| `ndmi_mean` | DECIMAL | — | Valor médio do índice NDMI |
+| `ndmi_median` | DECIMAL | — | Valor mediano do índice NDMI |
+| `ndmi_std` | DECIMAL | — | Desvio padrão do índice NDMI |
+| `gndvi_mean` | DECIMAL | — | Valor médio do índice GNDVI |
+| `gndvi_median` | DECIMAL | — | Valor mediano do índice GNDVI |
+| `gndvi_std` | DECIMAL | — | Desvio padrão do índice GNDVI |
+| `ndre_mean` | DECIMAL | — | Valor médio do índice NDRE |
+| `ndre_median` | DECIMAL | — | Valor mediano do índice NDRE |
+| `ndre_std` | DECIMAL | — | Desvio padrão do índice NDRE |
+| `rendvi_mean` | DECIMAL | — | Valor médio do índice RENDVI |
+| `rendvi_median` | DECIMAL | — | Valor mediano do índice RENDVI |
+| `rendvi_std` | DECIMAL | — | Desvio padrão do índice RENDVI |
+| `biomassa` | DECIMAL | — | Estimativa da biomassa da área analisada |
+| `cobertura_ve_
 
 **Relações com outras tabelas:**
 
-- Cada registro de **Métricas** é referenciado por um **Relatório**, por meio da chave estrangeira `relatorio.metrica_id`.
-- Essa relação permite vincular os resultados das análises espectrais a um relatório específico de projeto e área.
+- Cada registro de **Métricas** é referenciado por uma **área**, por meio da chave estrangeira `area_id`.
+- Essa relação permite vincular os resultados das análises espectrais a uma área específica de uma propriedade.
 
 **Índices:**
 
 - `PRIMARY KEY` em `id`  
 - `idx_relatorio_metrica_id` em `relatorio(metrica_id)` — acelera consultas e *joins* entre relatórios e métricas
+- `idx_projeto_nome` em `nome` para buscas por nome do projeto
+- `idx_projeto_responsavel` em `responsavel` para buscas por responsável
+- `idx_projeto_data_criacao` em `data_criacao` para ordenação temporal
+- `idx_area_municipio_estado` em `(municipio, estado)` para buscas por localização
+- `idx_area_nome` em `nome_area` 
+- `idx_relatorio_projeto_id` em `projeto_id`
+- `idx_relatorio_area_id` em `area_id`
+- `idx_relatorio_data_criacao` em `data`
+- `idx_relatorio_periodo` em `(periodo_inicio, periodo_fim)`
+- `idx_historico_relatorio_id` em `relatorio_id`
+- `idx_historico_data_registro` em `data_registro`
 
 ## Relacionamentos
 
 ### Cardinalidade
 
-- **Projeto → Relatório**: Um para Muitos (1:N)
-  - Um projeto pode ter múltiplos relatórios de análise
+- **Propriedade → area**: Um para Muitos (1:N)
+  - Uma propriedade pode ter múltiplas áreas para análisar
   
-- **Área → Relatório**: Um para Muitos (1:N)
+- **Área → métrica**: Um para Muitos (1:N)
   - Uma área pode ter múltiplas análises ao longo do tempo
-  
-- **Relatório → Histórico**: Um para Muitos (1:N)
-  - Um relatório pode ter múltiplos registros de histórico e alertas
-
-- **Relatório - Area**: Um para Um (1:1)
-  - Um área possui suas respectivas métricas referentes a um período de tempo.
 
 ### Integridade Referencial
 
