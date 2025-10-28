@@ -2,6 +2,7 @@ import os
 import psycopg2
 from psycopg2.extras import Json
 from dotenv import load_dotenv
+from flasgger import Swagger
 from flask import Flask, request
 
 CREATE_PROPRIEDADE_TABLE="""
@@ -140,20 +141,46 @@ WHERE id = %s
 load_dotenv()
 
 app = Flask(__name__)
+swagger = Swagger(app)
 url = os.getenv("DATABASE_URL")
 connection = psycopg2.connect(url)
 
 # Rotas GET ALL
 @app.get("/api/propriedade")
 def get_all_propriedade():
+    """
+    Get all propriedades
+    ---
+    tags:
+      - Propriedade
+    responses:
+      200:
+        description: A list of all propriedades
+        schema:
+          type: object
+          properties:
+            propriedades:
+              type: array
+              items:
+                type: object
+    """
     with connection:
         with connection.cursor() as cursor:
             cursor.execute(GET_ALL_PROPRIEDADE)
-            propriedades = cursor.fetchone()
+            propriedades = cursor.fetchall() # Testar fechall no lugar do fetchone
             return {"propriedades": propriedades}
     
 @app.get("/api/area")
 def get_all_area():
+    """
+    Get all áreas
+    ---
+    tags:
+      - Área
+    responses:
+      200:
+        description: Lista de todas as áreas
+    """
     with connection:
         with connection.cursor() as cursor:
             cursor.execute(GET_ALL_AREA)
@@ -162,6 +189,15 @@ def get_all_area():
 
 @app.get("/api/metricas")
 def get_all_metricas():
+    """
+    Get all métricas
+    ---
+    tags:
+      - Métricas
+    responses:
+      200:
+        description: Lista de todas as métricas
+    """
     with connection:
         with connection.cursor() as cursor:
             cursor.execute(GET_ALL_METRICAS)
@@ -171,19 +207,88 @@ def get_all_metricas():
 # Rotas POST
 @app.post("/api/propriedade")
 def create_propriedade():
+    """
+    Create a new propriedade
+    ---
+    tags:
+      - Propriedade
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            responsavel:
+              type: string
+              example: "João"
+            nome:
+              type: string
+              example: "Fazenda Primavera"
+    responses:
+      201:
+        description: Propriedade criada com sucesso
+        schema:
+          type: object
+          properties:
+            id:
+              type: integer
+            message:
+              type: string
+    """
     data = request.get_json()
-    reponsavel = data["responsavel"]
+    responsavel = data["responsavel"]
     nome = data["nome"]
 
     with connection:
         with connection.cursor() as cursor:
             cursor.execute(CREATE_PROPRIEDADE_TABLE)
-            cursor.execute(INSERT_PROPRIEDADE, (reponsavel, nome))
+            cursor.execute(INSERT_PROPRIEDADE, (responsavel, nome))
             propriedade_id = cursor.fetchone()[0]
     return {"id": propriedade_id, "message": f"Propriedade {nome} criada!"}, 201
 
 @app.post("/api/area")
 def create_area():
+    """
+    Create a new área
+    ---
+    tags:
+      - Área
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            propriedade_id:
+              type: integer
+              example: 1
+            coordenada:
+              type: object
+              example: {"lat": -23.56, "lng": -46.64}
+            municipio:
+              type: string
+              example: "Campinas"
+            estado:
+              type: string
+              example: "SP"
+            nome_area:
+              type: string
+              example: "Área Norte"
+            cultura_principal:
+              type: string
+              example: "Soja"
+            imagens:
+              type: string
+              example: "link_to_image.jpg"
+            observacoes:
+              type: string
+              example: "Solo fértil"
+    responses:
+      201:
+        description: Área criada com sucesso
+    """
     data = request.get_json()
     propriedade_id = data["propriedade_id"]
     coordenada = data["coordenada"]
@@ -203,6 +308,46 @@ def create_area():
 
 @app.post("/api/metricas")
 def create_metricas():
+    """
+    Create métricas for an área
+    ---
+    tags:
+      - Métricas
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            area_id:
+              type: integer
+              example: 1
+            periodo_inicio:
+              type: string
+              example: "2024-01-01"
+            periodo_fim:
+              type: string
+              example: "2024-02-01"
+            ndvi_mean:
+              type: number
+              example: 0.65
+            ndvi_median:
+              type: number
+              example: 0.63
+            ndvi_std:
+              type: number
+              example: 0.05
+            biomassa:
+              type: number
+              example: 120.5
+            cobertura_vegetal:
+              type: number
+              example: 80.2
+    responses:
+      201:
+        description: Métricas criadas com sucesso
+    """
     data = request.get_json()
 
     area_id = data["area_id"]
@@ -243,6 +388,15 @@ def create_metricas():
 # Rotas DELETE ALL
 @app.delete("/api/propriedade")
 def delete_propriedade():
+    """
+    Delete all propriedades
+    ---
+    tags:
+      - Propriedade
+    responses:
+      200:
+        description: Todas as propriedades foram apagadas com sucesso
+    """
     with connection:
         with connection.cursor() as cursor:
             cursor.execute(DELETE_ALL_PROPRIEDADE)
@@ -250,6 +404,15 @@ def delete_propriedade():
 
 @app.delete("/api/area")
 def delete_area():
+    """
+    Delete all áreas
+    ---
+    tags:
+      - Área
+    responses:
+      200:
+        description: Todas as áreas foram apagadas com sucesso
+    """
     with connection:
         with connection.cursor() as cursor:
             cursor.execute(DELETE_ALL_AREA)
@@ -257,6 +420,15 @@ def delete_area():
 
 @app.delete("/api/metricas")
 def delete_metricas():
+    """
+    Delete all métricas
+    ---
+    tags:
+      - Métricas
+    responses:
+      200:
+        description: Todas as métricas foram apagadas
+    """
     with connection:
         with connection.cursor() as cursor:
             cursor.execute(DELETE_ALL_METRICAS)
@@ -265,6 +437,26 @@ def delete_metricas():
 # Rotas DELETE BY ID
 @app.delete("/api/propriedade/<int:id_propriedade>")
 def delete_propriedade_by_id(id_propriedade):
+    """
+    Delete propriedade by ID
+    ---
+    tags:
+      - Propriedade
+    parameters:
+      - name: id_propriedade
+        in: path
+        type: integer
+        required: true
+        description: ID da propriedade a ser apagada
+    responses:
+      200:
+        description: Propriedade deletada com sucesso
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+    """
     with connection:
         with connection.cursor() as cursor:
             cursor.execute(DELETE_PROPRIEDADE_BY_ID, (id_propriedade,))
@@ -272,6 +464,20 @@ def delete_propriedade_by_id(id_propriedade):
 
 @app.delete("/api/area/<int:id_area>")
 def delete_area_by_id(id_area):
+    """
+    Delete área by ID
+    ---
+    tags:
+      - Área
+    parameters:
+      - name: id_area
+        in: path
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Área deletada com sucesso
+    """
     with connection:
         with connection.cursor() as cursor:
             cursor.execute(DELETE_AREA_BY_ID, (id_area,))
@@ -279,6 +485,20 @@ def delete_area_by_id(id_area):
 
 @app.delete("/api/metricas/<int:id_metricas>")
 def delete_metricas_by_id(id_metricas):
+    """
+    Delete métricas by ID
+    ---
+    tags:
+      - Métricas
+    parameters:
+      - name: id_metricas
+        in: path
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Métricas apagadas com sucesso
+    """
     with connection:
         with connection.cursor() as cursor:
             cursor.execute(DELETE_METRICAS_BY_ID, (id_metricas,))
@@ -287,6 +507,28 @@ def delete_metricas_by_id(id_metricas):
 # Rotas GET BY ID
 @app.get("/api/propriedade/<int:id_propriedade>")
 def get_propriedade_by_id(id_propriedade):
+    """
+    Get propriedade by ID
+    ---
+    tags:
+      - Propriedade
+    parameters:
+      - name: id_propriedade
+        in: path
+        type: integer
+        required: true
+        description: ID da propriedade
+    responses:
+      200:
+        description: Propriedade encontrada
+        schema:
+          type: object
+          properties:
+            propriedades:
+              type: array
+              items:
+                type: object
+    """
     with connection:
         with connection.cursor() as cursor:
             cursor.execute(GET_PROPRIEDADE_BY_ID, (id_propriedade,))
@@ -295,6 +537,20 @@ def get_propriedade_by_id(id_propriedade):
 
 @app.get("/api/area/<int:id_area>")
 def get_area_by_id(id_area):
+    """
+    Get área by ID
+    ---
+    tags:
+      - Área
+    parameters:
+      - name: id_area
+        in: path
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Área encontrada
+    """
     with connection:
         with connection.cursor() as cursor:
             cursor.execute(GET_AREA_BY_ID, (id_area,))
@@ -303,6 +559,20 @@ def get_area_by_id(id_area):
         
 @app.get("/api/metricas/<int:id_metricas>")
 def get_metricas_by_id(id_metricas):
+    """
+    Get métricas by ID
+    ---
+    tags:
+      - Métricas
+    parameters:
+      - name: id_metricas
+        in: path
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Métricas encontradas
+    """
     with connection:
         with connection.cursor() as cursor:
             cursor.execute(GET_METRICAS_BY_ID, (id_metricas,))
@@ -313,6 +583,39 @@ def get_metricas_by_id(id_metricas):
 
 @app.put("/api/propriedade/<int:id_propriedade>")
 def update_propriedade(id_propriedade):
+    """
+    Update propriedade by ID
+    ---
+    tags:
+      - Propriedade
+    parameters:
+      - name: id_propriedade
+        in: path
+        type: integer
+        required: true
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            responsavel:
+              type: string
+              example: "Maria"
+            nome:
+              type: string
+              example: "Fazenda Esperança"
+    responses:
+      200:
+        description: Propriedade atualizada com sucesso
+        schema:
+          type: object
+          properties:
+            id:
+              type: integer
+            message:
+              type: string
+    """
     data = request.get_json()
     responsavel = data.get("responsavel")
     nome = data.get("nome")
