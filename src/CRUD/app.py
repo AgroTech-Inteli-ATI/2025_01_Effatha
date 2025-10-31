@@ -207,7 +207,6 @@ DELETE FROM metricas_preditivas
 WHERE id = %s;
 """
 
-
 load_dotenv()
 
 app = Flask(__name__)
@@ -393,4 +392,57 @@ def update_propriedade(id_propriedade):
             row = cursor.fetchone()
     return {"id": row[0], "message": f"Propriedade {id_propriedade} atualizada com sucesso!"}
 
+# Metricas Preditivas
 
+@app.get("/api/metricas_preditivas")
+def get_all_metricas_preditivas():
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute(GET_ALL_METRICAS_PREDITIVAS)
+            metricas = cursor.fetchall()
+            return {"metricas_preditivas": metricas}
+
+@app.get("/api/metricas_preditivas/<int:id_pred>")
+def get_metricas_preditivas_by_id(id_pred):
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute(GET_METRICAS_PREDITIVAS_BY_ID, (id_pred,))
+            metrica = cursor.fetchall()
+            return {"metricas_preditivas": metrica}
+
+@app.post("/api/metricas_preditivas")
+def create_metricas_preditivas():
+    data = request.get_json()
+
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute(CREATE_METRICAS_PREDITIVAS_TABLE)
+            cursor.execute(INSERT_METRICAS_PREDITIVAS, (
+                data["area_id"], data["modelo_utilizado"],
+                data["periodo_previsto_inicio"], data["periodo_previsto_fim"],
+                data["ndvi_mean_pred"], data["ndvi_median_pred"], data["ndvi_std_pred"],
+                data["evi_mean_pred"], data["evi_median_pred"], data["evi_std_pred"],
+                data["ndwi_mean_pred"], data["ndwi_median_pred"], data["ndwi_std_pred"],
+                data["ndmi_mean_pred"], data["ndmi_median_pred"], data["ndmi_std_pred"],
+                data["gndvi_mean_pred"], data["gndvi_median_pred"], data["gndvi_std_pred"],
+                data["ndre_mean_pred"], data["ndre_median_pred"], data["ndre_std_pred"],
+                data["rendvi_mean_pred"], data["rendvi_median_pred"], data["rendvi_std_pred"],
+                data["biomassa_pred"], data["cobertura_vegetal_pred"],
+                data.get("observacoes", None)
+            ))
+            metrica_id = cursor.fetchone()[0]
+    return {"id": metrica_id, "message": "Métricas preditivas criadas com sucesso!"}, 201
+
+@app.delete("/api/metricas_preditivas")
+def delete_all_metricas_preditivas():
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute(DELETE_ALL_METRICAS_PREDITIVAS)
+    return {"message": "Todas as métricas preditivas foram apagadas com sucesso!"}
+
+@app.delete("/api/metricas_preditivas/<int:id_pred>")
+def delete_metricas_preditivas_by_id(id_pred):
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute(DELETE_METRICAS_PREDITIVAS_BY_ID, (id_pred,))
+    return {"message": f"Métricas preditivas {id_pred} apagadas com sucesso!"}
