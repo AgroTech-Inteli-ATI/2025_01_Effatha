@@ -137,6 +137,43 @@ DELETE FROM metricas
 WHERE id = %s
 """
 
+CREATE_METRICAS_PREDITIVAS_TABLE = """
+CREATE TABLE IF NOT EXISTS metricas_preditivas (
+    id SERIAL PRIMARY KEY,
+    area_id INTEGER NOT NULL,
+    modelo_utilizado VARCHAR(100) NOT NULL,
+    periodo_previsto_inicio DATE NOT NULL,
+    periodo_previsto_fim DATE NOT NULL,
+    ndvi_mean_pred DECIMAL,
+    ndvi_median_pred DECIMAL,
+    ndvi_std_pred DECIMAL,
+    evi_mean_pred DECIMAL,
+    evi_median_pred DECIMAL,
+    evi_std_pred DECIMAL,
+    ndwi_mean_pred DECIMAL,
+    ndwi_median_pred DECIMAL,
+    ndwi_std_pred DECIMAL,
+    ndmi_mean_pred DECIMAL,
+    ndmi_median_pred DECIMAL,
+    ndmi_std_pred DECIMAL,
+    gndvi_mean_pred DECIMAL,
+    gndvi_median_pred DECIMAL,
+    gndvi_std_pred DECIMAL,
+    ndre_mean_pred DECIMAL,
+    ndre_median_pred DECIMAL,
+    ndre_std_pred DECIMAL,
+    rendvi_mean_pred DECIMAL,
+    rendvi_median_pred DECIMAL,
+    rendvi_std_pred DECIMAL,
+    biomassa_pred DECIMAL,
+    cobertura_vegetal_pred DECIMAL,
+    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    observacoes TEXT,
+    CONSTRAINT fk_pred_area FOREIGN KEY (area_id) REFERENCES area(id) ON DELETE CASCADE
+);
+"""
+
+
 load_dotenv()
 
 app = Flask(__name__)
