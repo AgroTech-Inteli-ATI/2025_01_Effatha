@@ -173,6 +173,40 @@ CREATE TABLE IF NOT EXISTS metricas_preditivas (
 );
 """
 
+INSERT_METRICAS_PREDITIVAS = """
+INSERT INTO metricas_preditivas (
+    area_id, modelo_utilizado, periodo_previsto_inicio, periodo_previsto_fim,
+    ndvi_mean_pred, ndvi_median_pred, ndvi_std_pred,
+    evi_mean_pred, evi_median_pred, evi_std_pred,
+    ndwi_mean_pred, ndwi_median_pred, ndwi_std_pred,
+    ndmi_mean_pred, ndmi_median_pred, ndmi_std_pred,
+    gndvi_mean_pred, gndvi_median_pred, gndvi_std_pred,
+    ndre_mean_pred, ndre_median_pred, ndre_std_pred,
+    rendvi_mean_pred, rendvi_median_pred, rendvi_std_pred,
+    biomassa_pred, cobertura_vegetal_pred, observacoes
+)
+VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+RETURNING id;
+"""
+
+GET_ALL_METRICAS_PREDITIVAS = """
+SELECT * FROM metricas_preditivas
+"""
+
+GET_METRICAS_PREDITIVAS_BY_ID = """
+SELECT * FROM metricas_preditivas
+WHERE id = %s
+"""
+
+DELETE_ALL_METRICAS_PREDITIVAS = """
+DELETE FROM metricas_preditivas;
+"""
+
+DELETE_METRICAS_PREDITIVAS_BY_ID = """
+DELETE FROM metricas_preditivas
+WHERE id = %s;
+"""
+
 
 load_dotenv()
 
