@@ -2,7 +2,7 @@ from sqlalchemy import Integer, String, TIMESTAMP, ForeignKey, DECIMAL, Date, Te
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship, Mapped, mapped_column
-from database import Base
+from CRUD.database import Base
 from datetime import datetime
 from typing import Optional, Dict
 
