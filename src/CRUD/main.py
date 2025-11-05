@@ -22,10 +22,17 @@ Base.metadata.create_all(bind=engine)
 def listar_propriedades():
     """
     Lista todas as propriedades
+    Retorna uma lista de todas as propriedades cadastradas.
     ---
+    tags:
+      - Propriedade
     responses:
       200:
-        description: Lista de propriedades
+        description: Lista de propriedades retornada com sucesso.
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/Propriedade'
     """
     with SessionLocal() as db:
         propriedades = db.scalars(select(Propriedade)).all()
@@ -36,17 +43,23 @@ def listar_propriedades():
 def get_propriedade(id_propriedade):
     """
     Retorna uma propriedade pelo ID
+    Busca e retorna os detalhes de uma propriedade específica.
     ---
+    tags:
+      - Propriedade
     parameters:
       - name: id_propriedade
         in: path
         required: true
         type: integer
+        description: ID da propriedade a ser buscada.
     responses:
       200:
-        description: Propriedade encontrada
+        description: Propriedade encontrada.
+        schema:
+          $ref: '#/definitions/Propriedade'
       404:
-        description: Propriedade não encontrada
+        description: Propriedade não encontrada.
     """
     with SessionLocal() as db:
         propriedade = db.get(Propriedade, id_propriedade)
@@ -59,20 +72,33 @@ def get_propriedade(id_propriedade):
 def criar_propriedade():
     """
     Cria uma nova propriedade
+    Cadastra uma nova propriedade no sistema.
     ---
+    tags:
+      - Propriedade
     parameters:
       - in: body
         name: body
         required: true
         schema:
+          type: object
+          required:
+            - responsavel
+            - nome
           properties:
             responsavel:
               type: string
+              description: Nome do responsável pela propriedade.
             nome:
               type: string
+              description: Nome da propriedade.
     responses:
       201:
-        description: Propriedade criada com sucesso
+        description: Propriedade criada com sucesso.
+        schema:
+          $ref: '#/definitions/Propriedade'
+      400:
+        description: Erro na requisição ou no banco de dados.
     """
     data = request.get_json()
     with SessionLocal() as db:
@@ -94,20 +120,37 @@ def criar_propriedade():
 def atualizar_propriedade(id_propriedade):
     """
     Atualiza uma propriedade
+    Atualiza os dados de uma propriedade existente.
     ---
+    tags:
+      - Propriedade
     parameters:
       - name: id_propriedade
         in: path
         required: true
         type: integer
+        description: ID da propriedade a ser atualizada.
       - in: body
         name: body
+        required: true
         schema:
+          type: object
           properties:
             responsavel:
               type: string
+              description: Novo nome do responsável pela propriedade.
             nome:
               type: string
+              description: Novo nome da propriedade.
+    responses:
+      200:
+        description: Propriedade atualizada com sucesso.
+        schema:
+          $ref: '#/definitions/Propriedade'
+      404:
+        description: Propriedade não encontrada.
+      400:
+        description: Erro na requisição ou no banco de dados.
     """
     data = request.get_json()
     with SessionLocal() as db:
@@ -131,12 +174,23 @@ def atualizar_propriedade(id_propriedade):
 def deletar_propriedade(id_propriedade):
     """
     Deleta uma propriedade pelo ID
+    Remove uma propriedade do sistema.
     ---
+    tags:
+      - Propriedade
     parameters:
       - name: id_propriedade
         in: path
         required: true
         type: integer
+        description: ID da propriedade a ser deletada.
+    responses:
+      200:
+        description: Propriedade removida com sucesso.
+      404:
+        description: Propriedade não encontrada.
+      400:
+        description: Erro no banco de dados.
     """
     with SessionLocal() as db:
         propriedade = db.get(Propriedade, id_propriedade)
@@ -158,10 +212,17 @@ def deletar_propriedade(id_propriedade):
 def listar_areas():
     """
     Lista todas as áreas
+    Retorna uma lista de todas as áreas cadastradas.
     ---
+    tags:
+      - Área
     responses:
       200:
-        description: Lista de áreas
+        description: Lista de áreas retornada com sucesso.
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/Area'
     """
     with SessionLocal() as db:
         areas = db.scalars(select(Area)).all()
@@ -171,17 +232,23 @@ def listar_areas():
 def get_area(id_area):
     """
     Retorna uma área pelo ID
+    Busca e retorna os detalhes de uma área específica.
     ---
+    tags:
+      - Área
     parameters:
       - name: id_area
         in: path
         required: true
         type: integer
+        description: ID da área a ser buscada.
     responses:
       200:
-        description: Área encontrada
+        description: Área encontrada.
+        schema:
+          $ref: '#/definitions/Area'
       404:
-        description: Área não encontrada
+        description: Área não encontrada.
     """
     with SessionLocal() as db:
         area = db.get(Area, id_area)
@@ -194,28 +261,54 @@ def get_area(id_area):
 def criar_area():
     """
     Cria uma nova área
+    Cadastra uma nova área no sistema, associada a uma propriedade.
     ---
+    tags:
+      - Área
     parameters:
       - in: body
         name: body
+        required: true
         schema:
+          type: object
+          required:
+            - propriedade_id
+            - coordenada
+            - municipio
+            - estado
+            - nome_area
           properties:
             propriedade_id:
               type: integer
+              description: ID da propriedade à qual a área pertence.
             coordenada:
               type: object
+              description: Coordenadas geográficas da área.
             municipio:
               type: string
+              description: Município onde a área está localizada.
             estado:
               type: string
+              description: Estado onde a área está localizada.
             nome_area:
               type: string
+              description: Nome da área.
             cultura_principal:
               type: string
+              description: Cultura principal cultivada na área.
             imagens:
               type: string
+              description: URL ou caminho para imagens da área.
             observacoes:
               type: string
+              description: Observações adicionais sobre a área.
+    responses:
+      201:
+        description: Área criada com sucesso.
+        schema:
+          $ref: '#/definitions/Area'
+      400:
+        description: Erro na requisição ou no banco de dados.
     """
     data = request.get_json()
     with SessionLocal() as db:
@@ -242,32 +335,55 @@ def criar_area():
 def atualizar_area(id_area):
     """
     Atualiza uma área
+    Atualiza os dados de uma área existente.
     ---
+    tags:
+      - Área
     parameters:
       - name: id_area
         in: path
         required: true
         type: integer
+        description: ID da área a ser atualizada.
       - in: body
         name: body
+        required: true
         schema:
+          type: object
           properties:
             propriedade_id:
               type: integer
+              description: Novo ID da propriedade à qual a área pertence.
             coordenada:
               type: object
+              description: Novas coordenadas geográficas da área.
             municipio:
               type: string
+              description: Novo município.
             estado:
               type: string
+              description: Novo estado.
             nome_area:
               type: string
+              description: Novo nome da área.
             cultura_principal:
               type: string
+              description: Nova cultura principal.
             imagens:
               type: string
+              description: Nova URL ou caminho para imagens.
             observacoes:
               type: string
+              description: Novas observações.
+    responses:
+      200:
+        description: Área atualizada com sucesso.
+        schema:
+          $ref: '#/definitions/Area'
+      404:
+        description: Área não encontrada.
+      400:
+        description: Erro na requisição ou no banco de dados.
     """
     data = request.get_json()
     with SessionLocal() as db:
@@ -297,12 +413,23 @@ def atualizar_area(id_area):
 def deletar_area(id_area):
     """
     Deleta uma área pelo ID
+    Remove uma área do sistema.
     ---
+    tags:
+      - Área
     parameters:
       - name: id_area
         in: path
         required: true
         type: integer
+        description: ID da área a ser deletada.
+    responses:
+      200:
+        description: Área removida com sucesso.
+      404:
+        description: Área não encontrada.
+      400:
+        description: Erro no banco de dados.
     """
     with SessionLocal() as db:
         area = db.get(Area, id_area)
@@ -322,7 +449,20 @@ def deletar_area(id_area):
 
 @app.route("/api/metricas", methods=["GET"])
 def listar_metricas():
-    """Lista todas as métricas"""
+    """
+    Lista todas as métricas
+    Retorna uma lista de todas as métricas cadastradas.
+    ---
+    tags:
+      - Métricas
+    responses:
+      200:
+        description: Lista de métricas retornada com sucesso.
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/Metricas'
+    """
     with SessionLocal() as db:
         metricas = db.scalars(select(Metricas)).all()
         return jsonify([m.to_dict() for m in metricas]), 200
@@ -331,17 +471,23 @@ def listar_metricas():
 def get_metricas(id_metricas):
     """
     Retorna uma métrica pelo ID
+    Busca e retorna os detalhes de uma métrica específica.
     ---
+    tags:
+      - Métricas
     parameters:
       - name: id_metricas
         in: path
         required: true
         type: integer
+        description: ID da métrica a ser buscada.
     responses:
       200:
-        description: Métrica encontrada
+        description: Métrica encontrada.
+        schema:
+          $ref: '#/definitions/Metricas'
       404:
-        description: Métrica não encontrada
+        description: Métrica não encontrada.
     """
     with SessionLocal() as db:
         metrica = db.get(Metricas, id_metricas)
@@ -351,7 +497,132 @@ def get_metricas(id_metricas):
 
 @app.route("/api/metricas", methods=["POST"])
 def criar_metricas():
-    """Cria uma nova métrica"""
+    """
+    Cria uma nova métrica
+    Cadastra uma nova métrica no sistema, associada a uma área.
+    ---
+    tags:
+      - Métricas
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - area_id
+            - data_coleta
+          properties:
+            area_id:
+              type: integer
+              description: ID da área à qual a métrica pertence.
+            data_coleta:
+              type: string
+              format: date
+              description: Data da coleta da métrica (formato YYYY-MM-DD).
+            ndvi_mean:
+              type: number
+              format: float
+              description: Média do NDVI.
+            ndvi_median:
+              type: number
+              format: float
+              description: Mediana do NDVI.
+            ndvi_std:
+              type: number
+              format: float
+              description: Desvio padrão do NDVI.
+            evi_mean:
+              type: number
+              format: float
+              description: Média do EVI.
+            evi_median:
+              type: number
+              format: float
+              description: Mediana do EVI.
+            evi_std:
+              type: number
+              format: float
+              description: Desvio padrão do EVI.
+            ndwi_mean:
+              type: number
+              format: float
+              description: Média do NDWI.
+            ndwi_median:
+              type: number
+              format: float
+              description: Mediana do NDWI.
+            ndwi_std:
+              type: number
+              format: float
+              description: Desvio padrão do NDWI.
+            ndmi_mean:
+              type: number
+              format: float
+              description: Média do NDMI.
+            ndmi_median:
+              type: number
+              format: float
+              description: Mediana do NDMI.
+            ndmi_std:
+              type: number
+              format: float
+              description: Desvio padrão do NDMI.
+            gndvi_mean:
+              type: number
+              format: float
+              description: Média do GNDVI.
+            gndvi_median:
+              type: number
+              format: float
+              description: Mediana do GNDVI.
+            gndvi_std:
+              type: number
+              format: float
+              description: Desvio padrão do GNDVI.
+            ndre_mean:
+              type: number
+              format: float
+              description: Média do NDRE.
+            ndre_median:
+              type: number
+              format: float
+              description: Mediana do NDRE.
+            ndre_std:
+              type: number
+              format: float
+              description: Desvio padrão do NDRE.
+            rendvi_mean:
+              type: number
+              format: float
+              description: Média do RENDVI.
+            rendvi_median:
+              type: number
+              format: float
+              description: Mediana do RENDVI.
+            rendvi_std:
+              type: number
+              format: float
+              description: Desvio padrão do RENDVI.
+            biomassa:
+              type: number
+              format: float
+              description: Valor da biomassa.
+            cobertura_vegetal:
+              type: number
+              format: float
+              description: Porcentagem de cobertura vegetal.
+            observacoes:
+              type: string
+              description: Observações adicionais.
+    responses:
+      201:
+        description: Métrica criada com sucesso.
+        schema:
+          $ref: '#/definitions/Metricas'
+      400:
+        description: Erro na requisição, formato de data inválido ou no banco de dados.
+    """
     data = request.get_json()
     with SessionLocal() as db:
         try:
@@ -395,7 +666,46 @@ def criar_metricas():
 
 @app.route("/api/metricas/<int:id_metricas>", methods=["PUT"])
 def atualizar_metricas(id_metricas):
-    """Atualiza uma métrica"""
+    """
+    Atualiza uma métrica
+    Atualiza os dados de uma métrica existente.
+    ---
+    tags:
+      - Métricas
+    parameters:
+      - name: id_metricas
+        in: path
+        required: true
+        type: integer
+        description: ID da métrica a ser atualizada.
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            area_id:
+              type: integer
+              description: Novo ID da área.
+            data_coleta:
+              type: string
+              format: date
+              description: Nova data da coleta da métrica (formato YYYY-MM-DD).
+            ndvi_mean:
+              type: number
+              format: float
+              description: Nova média do NDVI.
+            # ... (outras propriedades de métricas)
+    responses:
+      200:
+        description: Métrica atualizada com sucesso.
+        schema:
+          $ref: '#/definitions/Metricas'
+      404:
+        description: Métrica não encontrada.
+      400:
+        description: Erro na requisição, formato de data inválido ou no banco de dados.
+    """
     data = request.get_json()
     with SessionLocal() as db:
         metrica = db.get(Metricas, id_metricas)
@@ -444,12 +754,23 @@ def atualizar_metricas(id_metricas):
 def deletar_metricas(id_metricas):
     """
     Deleta uma métrica pelo ID
+    Remove uma métrica do sistema.
     ---
+    tags:
+      - Métricas
     parameters:
       - name: id_metricas
         in: path
         required: true
         type: integer
+        description: ID da métrica a ser deletada.
+    responses:
+      200:
+        description: Métrica removida com sucesso.
+      404:
+        description: Métrica não encontrada.
+      400:
+        description: Erro no banco de dados.
     """
     with SessionLocal() as db:
         metrica = db.get(Metricas, id_metricas)
@@ -469,7 +790,20 @@ def deletar_metricas(id_metricas):
 
 @app.route("/api/metricas_preditivas", methods=["GET"])
 def listar_metricas_preditivas():
-    """Lista todas as métricas preditivas"""
+    """
+    Lista todas as métricas preditivas
+    Retorna uma lista de todas as métricas preditivas cadastradas.
+    ---
+    tags:
+      - Métricas Preditivas
+    responses:
+      200:
+        description: Lista de métricas preditivas retornada com sucesso.
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/MetricasPreditivas'
+    """
     with SessionLocal() as db:
         metricas = db.scalars(select(MetricasPreditivas)).all()
         return jsonify([m.to_dict() for m in metricas]), 200
@@ -478,17 +812,23 @@ def listar_metricas_preditivas():
 def get_metricas_preditivas(id_pred):
     """
     Retorna uma métrica preditiva pelo ID
+    Busca e retorna os detalhes de uma métrica preditiva específica.
     ---
+    tags:
+      - Métricas Preditivas
     parameters:
       - name: id_pred
         in: path
         required: true
         type: integer
+        description: ID da métrica preditiva a ser buscada.
     responses:
       200:
-        description: Métrica Preditiva encontrada
+        description: Métrica Preditiva encontrada.
+        schema:
+          $ref: '#/definitions/MetricasPreditivas'
       404:
-        description: Métrica Preditiva não encontrada
+        description: Métrica Preditiva não encontrada.
     """
     with SessionLocal() as db:
         metrica = db.get(MetricasPreditivas, id_pred)
@@ -498,7 +838,51 @@ def get_metricas_preditivas(id_pred):
 
 @app.route("/api/metricas_preditivas", methods=["POST"])
 def criar_metricas_preditivas():
-    """Cria uma nova métrica preditiva"""
+    """
+    Cria uma nova métrica preditiva
+    Cadastra uma nova métrica preditiva no sistema.
+    ---
+    tags:
+      - Métricas Preditivas
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - area_id
+            - modelo_utilizado
+            - periodo_previsto_inicio
+            - periodo_previsto_fim
+          properties:
+            area_id:
+              type: integer
+              description: ID da área à qual a métrica pertence.
+            modelo_utilizado:
+              type: string
+              description: Nome ou identificador do modelo de predição utilizado.
+            periodo_previsto_inicio:
+              type: string
+              format: date
+              description: Data de início do período previsto (formato YYYY-MM-DD).
+            periodo_previsto_fim:
+              type: string
+              format: date
+              description: Data de fim do período previsto (formato YYYY-MM-DD).
+            ndvi_mean_pred:
+              type: number
+              format: float
+              description: Média predita do NDVI.
+            # ... (outras propriedades preditivas)
+    responses:
+      201:
+        description: Métrica Preditiva criada com sucesso.
+        schema:
+          $ref: '#/definitions/MetricasPreditivas'
+      400:
+        description: Erro na requisição, formato de data inválido ou no banco de dados.
+    """
     data = request.get_json()
     with SessionLocal() as db:
         try:
@@ -544,7 +928,53 @@ def criar_metricas_preditivas():
 
 @app.route("/api/metricas_preditivas/<int:id_pred>", methods=["PUT"])
 def atualizar_metricas_preditivas(id_pred):
-    """Atualiza uma métrica preditiva"""
+    """
+    Atualiza uma métrica preditiva
+    Atualiza os dados de uma métrica preditiva existente.
+    ---
+    tags:
+      - Métricas Preditivas
+    parameters:
+      - name: id_pred
+        in: path
+        required: true
+        type: integer
+        description: ID da métrica preditiva a ser atualizada.
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            area_id:
+              type: integer
+              description: Novo ID da área.
+            modelo_utilizado:
+              type: string
+              description: Novo nome ou identificador do modelo de predição.
+            periodo_previsto_inicio:
+              type: string
+              format: date
+              description: Nova data de início do período previsto (formato YYYY-MM-DD).
+            periodo_previsto_fim:
+              type: string
+              format: date
+              description: Nova data de fim do período previsto (formato YYYY-MM-DD).
+            ndvi_mean_pred:
+              type: number
+              format: float
+              description: Nova média predita do NDVI.
+            # ... (outras propriedades preditivas)
+    responses:
+      200:
+        description: Métrica Preditiva atualizada com sucesso.
+        schema:
+          $ref: '#/definitions/MetricasPreditivas'
+      404:
+        description: Métrica Preditiva não encontrada.
+      400:
+        description: Erro na requisição, formato de data inválido ou no banco de dados.
+    """
     data = request.get_json()
     with SessionLocal() as db:
         metrica = db.get(MetricasPreditivas, id_pred)
@@ -595,12 +1025,23 @@ def atualizar_metricas_preditivas(id_pred):
 def deletar_metricas_preditivas(id_pred):
     """
     Deleta uma métrica preditiva pelo ID
+    Remove uma métrica preditiva do sistema.
     ---
+    tags:
+      - Métricas Preditivas
     parameters:
       - name: id_pred
         in: path
         required: true
         type: integer
+        description: ID da métrica preditiva a ser deletada.
+    responses:
+      200:
+        description: Métrica Preditiva removida com sucesso.
+      404:
+        description: Métrica Preditiva não encontrada.
+      400:
+        description: Erro no banco de dados.
     """
     with SessionLocal() as db:
         metrica = db.get(MetricasPreditivas, id_pred)
