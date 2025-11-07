@@ -12,8 +12,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Search, Plus, Loader2, Pencil, Trash2 } from "lucide-react";
+import { Search, Plus, Loader2, Pencil, Trash2, TrendingUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 import { areaService } from "@/services/areaService";
 import { propriedadeService } from "@/services/propriedadeService";
 import { AreaFormDialog } from "@/components/AreaFormDialog";
@@ -23,6 +24,7 @@ import type { Propriedade } from "@/types/propriedade";
 
 const Areas = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Estados
   const [areas, setAreas] = useState<Area[]>([]);
@@ -269,6 +271,15 @@ const Areas = () => {
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => navigate(`/area/${area.id}/historico`)}
+                              className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
+                              title="Ver histórico de métricas"
+                            >
+                              <TrendingUp className="h-4 w-4" />
+                            </Button>
                             <Button 
                               variant="outline" 
                               size="sm"
