@@ -15,8 +15,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Search, Plus, Loader2, Eye, Trash2, Download } from "lucide-react";
+import { Search, Plus, Loader2, Eye, Trash2, Download, GitCompare } from "lucide-react";
 import { CalculateMetricsDialog } from "@/components/CalculateMetricsDialog";
+import { CompareAreasDialog } from "@/components/CompareAreasDialog";
 import { DeleteConfirmDialog } from "@/components/DeleteConfirmDialog";
 import { metricasService } from "@/services/metricasService";
 import { areaService } from "@/services/areaService";
@@ -39,6 +40,7 @@ const Relatorios = () => {
   
   // Dialogs
   const [isCalculateDialogOpen, setIsCalculateDialogOpen] = useState(false);
+  const [isCompareDialogOpen, setIsCompareDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [metricaToDelete, setMetricaToDelete] = useState<Metricas | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -266,14 +268,26 @@ const Relatorios = () => {
             </div>
           </div>
 
-          <Button 
-            className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2"
-            onClick={() => setIsCalculateDialogOpen(true)}
-            disabled={areas.length === 0}
-          >
-            <Plus className="h-4 w-4" />
-            Calcular novas métricas
-          </Button>
+          <div className="flex gap-3">
+            <Button 
+              className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2"
+              onClick={() => setIsCalculateDialogOpen(true)}
+              disabled={areas.length === 0}
+            >
+              <Plus className="h-4 w-4" />
+              Calcular novas métricas
+            </Button>
+
+            <Button
+              variant="outline"
+              className="border-accent text-accent hover:bg-accent hover:text-accent-foreground gap-2"
+              onClick={() => setIsCompareDialogOpen(true)}
+              disabled={areas.length < 2}
+            >
+              <GitCompare className="h-4 w-4" />
+              Comparar Áreas
+            </Button>
+          </div>
         </div>
 
         <Card className="border-border">
@@ -382,6 +396,17 @@ const Relatorios = () => {
           onSubmit={handleCalculateMetrics}
           areas={areas}
           isLoading={isCalculating}
+        />
+
+        {/* Dialog de comparação de áreas */}
+        <CompareAreasDialog
+          open={isCompareDialogOpen}
+          onOpenChange={setIsCompareDialogOpen}
+          onSubmit={(selectedAreaIds) => {
+            setIsCompareDialogOpen(false);
+            navigate(`/comparativo-areas?areas=${selectedAreaIds.join(",")}`);
+          }}
+          areas={areas}
         />
 
         {/* Dialog de confirmação de exclusão */}
