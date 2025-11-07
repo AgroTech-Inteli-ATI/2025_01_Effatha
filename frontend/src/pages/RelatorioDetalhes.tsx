@@ -1,397 +1,373 @@
+/**
+ * Página de detalhes de um relatório de métricas
+ */
+
+import { useState, useEffect } from "react";
 import { Layout } from "@/components/Layout";
 import { Card } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useParams } from "react-router-dom";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { useState } from "react";
-import { Calendar } from "lucide-react";
-
-// Dados simulados para diferentes períodos de tempo
-const generateData = (days: number, metric: string) => {
-  const data = [];
-  const baseValues: { [key: string]: number } = {
-    ndvi: 0.6,
-    savi: 0.5,
-    biomass: 2500,
-    evi: 0.4,
-  };
-  
-  const base = baseValues[metric] || 0.5;
-  
-  for (let i = 0; i < days; i++) {
-    const variation = (Math.random() - 0.5) * 0.2;
-    data.push({
-      name: `Dia ${i + 1}`,
-      value: base + variation,
-    });
-  }
-  return data;
-};
-
-const generateComparativeData = (days: number, metric: string) => {
-  const data = [];
-  const baseValues: { [key: string]: number } = {
-    ndvi: 0.6,
-    savi: 0.5,
-    biomass: 2500,
-    evi: 0.4,
-  };
-  
-  const base = baseValues[metric] || 0.5;
-  
-  for (let i = 0; i < days; i++) {
-    const variation1 = (Math.random() - 0.5) * 0.2;
-    const variation2 = (Math.random() - 0.5) * 0.2;
-    data.push({
-      name: `Dia ${i + 1}`,
-      fazenda1: base + variation1,
-      fazenda2: base + variation2,
-    });
-  }
-  return data;
-};
-
+import { Button } from "@/components/ui/button";
+import { Loader2, Download, ArrowLeft } from "lucide-react";
+import { useParams, useNavigate } from "react-router-dom";
+import { metricasService } from "@/services/metricasService";
+import { areaService } from "@/services/areaService";
+import { MetricsCards } from "@/components/MetricsCards";
+import type { Metricas } from "@/types/metricas";
+import type { Area } from "@/types/area";
+import { useToast } from "@/hooks/use-toast";
+import { format, parseISO } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 const RelatorioDetalhes = () => {
   const { id } = useParams();
-  const [timeRange1, setTimeRange1] = useState("7");
-  const [timeRange2, setTimeRange2] = useState("7");
-  const [timeRangeComparative, setTimeRangeComparative] = useState("7");
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const [metricas, setMetricas] = useState<Metricas | null>(null);
+  const [area, setArea] = useState<Area | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
+  const loadData = async () => {
+    if (!id) return;
+
+    setIsLoading(true);
+    try {
+      const metricasData = await metricasService.getById(parseInt(id));
+      setMetricas(metricasData);
+
+      const areaData = await areaService.getById(metricasData.area_id);
+      setArea(areaData);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Erro ao carregar dados",
+        description: error instanceof Error ? error.message : "Erro desconhecido",
+      });
+      navigate("/relatorios");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const formatDate = (dateStr: string): string => {
+    try {
+      return format(parseISO(dateStr), "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
+    } catch {
+      return dateStr;
+    }
+  };
+
+  const exportToCSV = () => {
+    if (!metricas || !area) return;
+
+    const csvData = [
+      ["Métrica", "Valor"],
+      ["=== INFORMAÇÕES GERAIS ===", ""],
+      ["ID do Relatório", metricas.id],
+      ["Área", area.nome_area],
+      ["Município", area.municipio],
+      ["Estado", area.estado],
+      ["Cultura Principal", area.cultura_principal || "N/A"],
+      ["Período Início", metricas.periodo_inicio],
+      ["Período Fim", metricas.periodo_fim],
+      [""],
+      ["=== NDVI - Índice de Vegetação por Diferença Normalizada ===", ""],
+      ["NDVI Média", metricas.ndvi_mean ?? "N/A"],
+      ["NDVI Mediana", metricas.ndvi_median ?? "N/A"],
+      ["NDVI Desvio Padrão", metricas.ndvi_std ?? "N/A"],
+      [""],
+      ["=== EVI - Índice de Vegetação Melhorado ===", ""],
+      ["EVI Média", metricas.evi_mean ?? "N/A"],
+      ["EVI Mediana", metricas.evi_median ?? "N/A"],
+      ["EVI Desvio Padrão", metricas.evi_std ?? "N/A"],
+      [""],
+      ["=== NDWI - Índice de Água por Diferença Normalizada ===", ""],
+      ["NDWI Média", metricas.ndwi_mean ?? "N/A"],
+      ["NDWI Mediana", metricas.ndwi_median ?? "N/A"],
+      ["NDWI Desvio Padrão", metricas.ndwi_std ?? "N/A"],
+      [""],
+      ["=== NDMI - Índice de Umidade por Diferença Normalizada ===", ""],
+      ["NDMI Média", metricas.ndmi_mean ?? "N/A"],
+      ["NDMI Mediana", metricas.ndmi_median ?? "N/A"],
+      ["NDMI Desvio Padrão", metricas.ndmi_std ?? "N/A"],
+      [""],
+      ["=== GNDVI - Índice de Vegetação Verde Normalizado ===", ""],
+      ["GNDVI Média", metricas.gndvi_mean ?? "N/A"],
+      ["GNDVI Mediana", metricas.gndvi_median ?? "N/A"],
+      ["GNDVI Desvio Padrão", metricas.gndvi_std ?? "N/A"],
+      [""],
+      ["=== NDRE - Índice de Red Edge Normalizado ===", ""],
+      ["NDRE Média", metricas.ndre_mean ?? "N/A"],
+      ["NDRE Mediana", metricas.ndre_median ?? "N/A"],
+      ["NDRE Desvio Padrão", metricas.ndre_std ?? "N/A"],
+      [""],
+      ["=== RENDVI - Índice Red Edge NDVI ===", ""],
+      ["RENDVI Média", metricas.rendvi_mean ?? "N/A"],
+      ["RENDVI Mediana", metricas.rendvi_median ?? "N/A"],
+      ["RENDVI Desvio Padrão", metricas.rendvi_std ?? "N/A"],
+      [""],
+      ["=== ESTIMATIVAS ===", ""],
+      ["Biomassa (t/ha)", metricas.biomassa ?? "N/A"],
+      ["Cobertura Vegetal", metricas.cobertura_vegetal ?? "N/A"],
+    ];
+
+    const csvContent = csvData.map(row => row.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+
+    link.setAttribute("href", url);
+    link.setAttribute(
+      "download",
+      `relatorio_${area.nome_area}_${metricas.periodo_inicio}.csv`
+    );
+    link.style.visibility = "hidden";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    toast({
+      title: "Relatório exportado",
+      description: "O arquivo CSV foi baixado com sucesso",
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="p-8 flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="h-12 w-12 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!metricas || !area) {
+    return (
+      <Layout>
+        <div className="p-8">
+          <p className="text-center text-muted-foreground">Relatório não encontrado</p>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
       <div className="p-8">
-        <h1 className="text-4xl font-bold text-primary mb-8">Relatório {id}</h1>
+        {/* Cabeçalho */}
+        <div className="mb-8">
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/relatorios")}
+            className="mb-4 -ml-2"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Voltar para Relatórios
+          </Button>
+          
+          <div className="flex items-start justify-between">
+            <div>
+              <h1 className="text-4xl font-bold text-primary mb-2">
+                Relatório de Métricas #{metricas.id}
+              </h1>
+              <p className="text-muted-foreground text-lg">
+                {area.nome_area} - {area.municipio}/{area.estado}
+              </p>
+              {area.cultura_principal && (
+                <p className="text-muted-foreground">
+                  Cultura: {area.cultura_principal}
+                </p>
+              )}
+            </div>
+            
+            <Button
+              onClick={exportToCSV}
+              className="bg-blue-600 hover:bg-blue-700 text-white gap-2"
+            >
+              <Download className="h-4 w-4" />
+              Exportar CSV
+            </Button>
+          </div>
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* Fazenda 1 */}
+        {/* Informações do Período */}
+        <Card className="border-border mb-6">
+          <div className="p-6">
+            <h2 className="text-xl font-bold mb-4">Período de Análise</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">Data de Início</p>
+                <p className="text-lg font-semibold">{formatDate(metricas.periodo_inicio)}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">Data de Fim</p>
+                <p className="text-lg font-semibold">{formatDate(metricas.periodo_fim)}</p>
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        {/* Cards de Métricas */}
+        <div className="mb-6">
+          <h2 className="text-xl font-bold mb-4">Índices de Vegetação</h2>
+          <MetricsCards metricas={metricas} />
+        </div>
+
+        {/* Detalhes Expandidos */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* NDVI */}
           <Card className="border-border">
             <div className="p-6">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-lg font-semibold">Variáveis básicas Fazenda 1</h3>
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                  <Select value={timeRange1} onValueChange={setTimeRange1}>
-                    <SelectTrigger className="w-[140px] h-8 text-sm">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="7">Últimos 7 dias</SelectItem>
-                      <SelectItem value="15">Últimos 15 dias</SelectItem>
-                      <SelectItem value="30">Últimos 30 dias</SelectItem>
-                      <SelectItem value="60">Últimos 60 dias</SelectItem>
-                      <SelectItem value="90">Últimos 90 dias</SelectItem>
-                    </SelectContent>
-                  </Select>
+              <h3 className="text-lg font-bold mb-2">NDVI</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Normalized Difference Vegetation Index - Mede a densidade e saúde da vegetação
+              </p>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Média:</span>
+                  <span className="font-semibold">{metricas.ndvi_mean?.toFixed(4) || "N/A"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Mediana:</span>
+                  <span className="font-semibold">{metricas.ndvi_median?.toFixed(4) || "N/A"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Desvio Padrão:</span>
+                  <span className="font-semibold">{metricas.ndvi_std?.toFixed(4) || "N/A"}</span>
                 </div>
               </div>
-              
-              <Tabs defaultValue="ndvi" className="w-full">
-                <TabsList className="w-full justify-start bg-transparent border-b rounded-none pb-0">
-                  <TabsTrigger 
-                    value="ndvi" 
-                    className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
-                  >
-                    NDVI
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="savi"
-                    className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
-                  >
-                    SAVI
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="biomass"
-                    className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
-                  >
-                    Biomass.
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="evi"
-                    className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
-                  >
-                    EVI
-                  </TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="ndvi" className="mt-4">
-                  <div className="text-xs text-muted-foreground mb-2">NDVI - Índice de Vegetação</div>
-                  <ResponsiveContainer width="100%" height={200}>
-                    <LineChart data={generateData(parseInt(timeRange1), "ndvi")}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                      <XAxis dataKey="name" fontSize={12} />
-                      <YAxis fontSize={12} domain={[0, 1]} />
-                      <Tooltip />
-                      <Line type="monotone" dataKey="value" stroke="hsl(160, 85%, 20%)" strokeWidth={2} dot={false} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </TabsContent>
-
-                <TabsContent value="savi" className="mt-4">
-                  <div className="text-xs text-muted-foreground mb-2">SAVI - Índice Ajustado do Solo</div>
-                  <ResponsiveContainer width="100%" height={200}>
-                    <LineChart data={generateData(parseInt(timeRange1), "savi")}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                      <XAxis dataKey="name" fontSize={12} />
-                      <YAxis fontSize={12} domain={[0, 1]} />
-                      <Tooltip />
-                      <Line type="monotone" dataKey="value" stroke="hsl(220, 85%, 50%)" strokeWidth={2} dot={false} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </TabsContent>
-
-                <TabsContent value="biomass" className="mt-4">
-                  <div className="text-xs text-muted-foreground mb-2">Biomassa Estimada (kg/ha)</div>
-                  <ResponsiveContainer width="100%" height={200}>
-                    <LineChart data={generateData(parseInt(timeRange1), "biomass")}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                      <XAxis dataKey="name" fontSize={12} />
-                      <YAxis fontSize={12} />
-                      <Tooltip />
-                      <Line type="monotone" dataKey="value" stroke="hsl(40, 85%, 50%)" strokeWidth={2} dot={false} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </TabsContent>
-
-                <TabsContent value="evi" className="mt-4">
-                  <div className="text-xs text-muted-foreground mb-2">EVI - Índice de Vegetação Melhorado</div>
-                  <ResponsiveContainer width="100%" height={200}>
-                    <LineChart data={generateData(parseInt(timeRange1), "evi")}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                      <XAxis dataKey="name" fontSize={12} />
-                      <YAxis fontSize={12} domain={[0, 1]} />
-                      <Tooltip />
-                      <Line type="monotone" dataKey="value" stroke="hsl(280, 85%, 50%)" strokeWidth={2} dot={false} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </TabsContent>
-              </Tabs>
             </div>
           </Card>
 
-          {/* Fazenda 2 */}
+          {/* EVI */}
           <Card className="border-border">
             <div className="p-6">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-lg font-semibold">Variáveis básicas Fazenda 2</h3>
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                  <Select value={timeRange2} onValueChange={setTimeRange2}>
-                    <SelectTrigger className="w-[140px] h-8 text-sm">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="7">Últimos 7 dias</SelectItem>
-                      <SelectItem value="15">Últimos 15 dias</SelectItem>
-                      <SelectItem value="30">Últimos 30 dias</SelectItem>
-                      <SelectItem value="60">Últimos 60 dias</SelectItem>
-                      <SelectItem value="90">Últimos 90 dias</SelectItem>
-                    </SelectContent>
-                  </Select>
+              <h3 className="text-lg font-bold mb-2">EVI</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Enhanced Vegetation Index - Minimiza influência do solo e atmosfera
+              </p>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Média:</span>
+                  <span className="font-semibold">{metricas.evi_mean?.toFixed(4) || "N/A"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Mediana:</span>
+                  <span className="font-semibold">{metricas.evi_median?.toFixed(4) || "N/A"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Desvio Padrão:</span>
+                  <span className="font-semibold">{metricas.evi_std?.toFixed(4) || "N/A"}</span>
                 </div>
               </div>
-              
-              <Tabs defaultValue="ndvi" className="w-full">
-                <TabsList className="w-full justify-start bg-transparent border-b rounded-none pb-0">
-                  <TabsTrigger 
-                    value="ndvi"
-                    className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
-                  >
-                    NDVI
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="savi"
-                    className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
-                  >
-                    SAVI
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="biomass"
-                    className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
-                  >
-                    Biomass.
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="evi"
-                    className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
-                  >
-                    EVI
-                  </TabsTrigger>
-                </TabsList>
+            </div>
+          </Card>
 
-                <TabsContent value="ndvi" className="mt-4">
-                  <div className="text-xs text-muted-foreground mb-2">NDVI - Índice de Vegetação</div>
-                  <ResponsiveContainer width="100%" height={200}>
-                    <LineChart data={generateData(parseInt(timeRange2), "ndvi")}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                      <XAxis dataKey="name" fontSize={12} />
-                      <YAxis fontSize={12} domain={[0, 1]} />
-                      <Tooltip />
-                      <Line type="monotone" dataKey="value" stroke="hsl(160, 85%, 20%)" strokeWidth={2} dot={false} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </TabsContent>
+          {/* NDWI */}
+          <Card className="border-border">
+            <div className="p-6">
+              <h3 className="text-lg font-bold mb-2">NDWI</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Normalized Difference Water Index - Detecta conteúdo de água
+              </p>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Média:</span>
+                  <span className="font-semibold">{metricas.ndwi_mean?.toFixed(4) || "N/A"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Mediana:</span>
+                  <span className="font-semibold">{metricas.ndwi_median?.toFixed(4) || "N/A"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Desvio Padrão:</span>
+                  <span className="font-semibold">{metricas.ndwi_std?.toFixed(4) || "N/A"}</span>
+                </div>
+              </div>
+            </div>
+          </Card>
 
-                <TabsContent value="savi" className="mt-4">
-                  <div className="text-xs text-muted-foreground mb-2">SAVI - Índice Ajustado do Solo</div>
-                  <ResponsiveContainer width="100%" height={200}>
-                    <LineChart data={generateData(parseInt(timeRange2), "savi")}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                      <XAxis dataKey="name" fontSize={12} />
-                      <YAxis fontSize={12} domain={[0, 1]} />
-                      <Tooltip />
-                      <Line type="monotone" dataKey="value" stroke="hsl(220, 85%, 50%)" strokeWidth={2} dot={false} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </TabsContent>
+          {/* NDMI */}
+          <Card className="border-border">
+            <div className="p-6">
+              <h3 className="text-lg font-bold mb-2">NDMI</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Normalized Difference Moisture Index - Umidade da vegetação
+              </p>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Média:</span>
+                  <span className="font-semibold">{metricas.ndmi_mean?.toFixed(4) || "N/A"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Mediana:</span>
+                  <span className="font-semibold">{metricas.ndmi_median?.toFixed(4) || "N/A"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Desvio Padrão:</span>
+                  <span className="font-semibold">{metricas.ndmi_std?.toFixed(4) || "N/A"}</span>
+                </div>
+              </div>
+            </div>
+          </Card>
 
-                <TabsContent value="biomass" className="mt-4">
-                  <div className="text-xs text-muted-foreground mb-2">Biomassa Estimada (kg/ha)</div>
-                  <ResponsiveContainer width="100%" height={200}>
-                    <LineChart data={generateData(parseInt(timeRange2), "biomass")}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                      <XAxis dataKey="name" fontSize={12} />
-                      <YAxis fontSize={12} />
-                      <Tooltip />
-                      <Line type="monotone" dataKey="value" stroke="hsl(40, 85%, 50%)" strokeWidth={2} dot={false} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </TabsContent>
+          {/* GNDVI */}
+          <Card className="border-border">
+            <div className="p-6">
+              <h3 className="text-lg font-bold mb-2">GNDVI</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Green Normalized Difference Vegetation Index - Sensível ao clorofila
+              </p>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Média:</span>
+                  <span className="font-semibold">{metricas.gndvi_mean?.toFixed(4) || "N/A"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Mediana:</span>
+                  <span className="font-semibold">{metricas.gndvi_median?.toFixed(4) || "N/A"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Desvio Padrão:</span>
+                  <span className="font-semibold">{metricas.gndvi_std?.toFixed(4) || "N/A"}</span>
+                </div>
+              </div>
+            </div>
+          </Card>
 
-                <TabsContent value="evi" className="mt-4">
-                  <div className="text-xs text-muted-foreground mb-2">EVI - Índice de Vegetação Melhorado</div>
-                  <ResponsiveContainer width="100%" height={200}>
-                    <LineChart data={generateData(parseInt(timeRange2), "evi")}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                      <XAxis dataKey="name" fontSize={12} />
-                      <YAxis fontSize={12} domain={[0, 1]} />
-                      <Tooltip />
-                      <Line type="monotone" dataKey="value" stroke="hsl(280, 85%, 50%)" strokeWidth={2} dot={false} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </TabsContent>
-              </Tabs>
+          {/* NDRE */}
+          <Card className="border-border">
+            <div className="p-6">
+              <h3 className="text-lg font-bold mb-2">NDRE</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Normalized Difference Red Edge - Estresse e nitrogênio
+              </p>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Média:</span>
+                  <span className="font-semibold">{metricas.ndre_mean?.toFixed(4) || "N/A"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Mediana:</span>
+                  <span className="font-semibold">{metricas.ndre_median?.toFixed(4) || "N/A"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Desvio Padrão:</span>
+                  <span className="font-semibold">{metricas.ndre_std?.toFixed(4) || "N/A"}</span>
+                </div>
+              </div>
             </div>
           </Card>
         </div>
-
-        {/* Comparativo das áreas */}
-        <Card className="border-border">
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-lg font-semibold">Comparativo das áreas</h3>
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-                <Select value={timeRangeComparative} onValueChange={setTimeRangeComparative}>
-                  <SelectTrigger className="w-[140px] h-8 text-sm">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="7">Últimos 7 dias</SelectItem>
-                    <SelectItem value="15">Últimos 15 dias</SelectItem>
-                    <SelectItem value="30">Últimos 30 dias</SelectItem>
-                    <SelectItem value="60">Últimos 60 dias</SelectItem>
-                    <SelectItem value="90">Últimos 90 dias</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            
-            <Tabs defaultValue="ndvi" className="w-full">
-              <TabsList className="w-full justify-start bg-transparent border-b rounded-none pb-0">
-                <TabsTrigger 
-                  value="ndvi"
-                  className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
-                >
-                  NDVI
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="savi"
-                  className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
-                >
-                  SAVI
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="biomass"
-                  className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
-                >
-                  Biomass.
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="evi"
-                  className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
-                >
-                  EVI
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="ndvi" className="mt-4">
-                <div className="text-xs text-muted-foreground mb-2">NDVI - Índice de Vegetação</div>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={generateComparativeData(parseInt(timeRangeComparative), "ndvi")}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis dataKey="name" fontSize={12} />
-                    <YAxis fontSize={12} domain={[0, 1]} />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="fazenda1" stroke="hsl(160, 85%, 20%)" strokeWidth={2} name="Fazenda 1" dot={false} />
-                    <Line type="monotone" dataKey="fazenda2" stroke="hsl(280, 85%, 50%)" strokeWidth={2} name="Fazenda 2" dot={false} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </TabsContent>
-
-              <TabsContent value="savi" className="mt-4">
-                <div className="text-xs text-muted-foreground mb-2">SAVI - Índice Ajustado do Solo</div>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={generateComparativeData(parseInt(timeRangeComparative), "savi")}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis dataKey="name" fontSize={12} />
-                    <YAxis fontSize={12} domain={[0, 1]} />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="fazenda1" stroke="hsl(220, 85%, 50%)" strokeWidth={2} name="Fazenda 1" dot={false} />
-                    <Line type="monotone" dataKey="fazenda2" stroke="hsl(180, 85%, 40%)" strokeWidth={2} name="Fazenda 2" dot={false} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </TabsContent>
-
-              <TabsContent value="biomass" className="mt-4">
-                <div className="text-xs text-muted-foreground mb-2">Biomassa Estimada (kg/ha)</div>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={generateComparativeData(parseInt(timeRangeComparative), "biomass")}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis dataKey="name" fontSize={12} />
-                    <YAxis fontSize={12} />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="fazenda1" stroke="hsl(40, 85%, 50%)" strokeWidth={2} name="Fazenda 1" dot={false} />
-                    <Line type="monotone" dataKey="fazenda2" stroke="hsl(10, 85%, 50%)" strokeWidth={2} name="Fazenda 2" dot={false} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </TabsContent>
-
-              <TabsContent value="evi" className="mt-4">
-                <div className="text-xs text-muted-foreground mb-2">EVI - Índice de Vegetação Melhorado</div>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={generateComparativeData(parseInt(timeRangeComparative), "evi")}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis dataKey="name" fontSize={12} />
-                    <YAxis fontSize={12} domain={[0, 1]} />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="fazenda1" stroke="hsl(280, 85%, 50%)" strokeWidth={2} name="Fazenda 1" dot={false} />
-                    <Line type="monotone" dataKey="fazenda2" stroke="hsl(320, 85%, 50%)" strokeWidth={2} name="Fazenda 2" dot={false} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </TabsContent>
-            </Tabs>
-          </div>
-        </Card>
       </div>
     </Layout>
   );
 };
 
 export default RelatorioDetalhes;
-
