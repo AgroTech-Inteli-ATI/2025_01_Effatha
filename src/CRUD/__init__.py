@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from flasgger import Swagger
+from flask_cors import CORS
 from .routes import all_blueprints
 from .models import Base, Propriedade, Area, Metricas, MetricasPreditivas
 
@@ -9,6 +10,15 @@ def create_app():
     """
     # Inicialização do Flask
     app = Flask(__name__)
+
+    # Habilitar CORS para permitir requisições do frontend
+    CORS(app, resources={
+        r"/api/*": {
+            "origins": ["http://localhost:5173", "http://localhost:3000"],
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization"]
+        }
+    })
 
     # Inicialização do Swagger
     Swagger(app)
