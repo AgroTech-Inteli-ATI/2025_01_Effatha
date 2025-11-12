@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select
 from CRUD.database import SessionLocal, engine, get_db
 from CRUD.models import Base, Metricas  
+from CRUD.services.metrics_manager import fill_missing_periodic_metrics
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import date
 
@@ -349,3 +350,41 @@ def deletar_metricas(id_metricas):
         except SQLAlchemyError as e:
             db.rollback()
             return jsonify({"erro": str(e)}), 400
+        
+
+@metricas_bp.route("/fill_missing", methods=["POST"])
+def fill_missing_metrics():
+    """
+    Endpoint que recebe:
+      - area_id (int)
+      - start_date (YYYY-MM-DD)
+      - end_date (YYYY-MM-DD)
+      - period_days (int, opcional, default=10)
+      - collection (str, opcional, default='SENTINEL2')
+    Ele verifica quais janelas periódicas estão faltando para a área e insere somente os períodos faltantes.
+    """
+    data = request.get_json()
+    if not data:
+        return jsonify({"erro": "JSON no corpo obrigatório"}), 400
+
+    try:
+        area_id = int(data.get("area_id"))
+        start_date = data.get("start_date")
+        end_date = data.get("end_date")
+        if not (start_date and end_date):
+            return jsonify({"erro": "start_date e end_date são obrigatórios (YYYY-MM-DD)"}), 400
+        period_days = int(data.get("period_days", 10))
+        collection = data.get("collection", "SENTINEL2")
+
+        summary = fill_missing_periodic_metrics(
+            area_id=area_id,
+            start_date_str=start_date,
+            end_date_str=end_date,
+            period_days=period_days,
+            collection=collection
+        )
+        return jsonify(summary), 200
+    except ValueError as ve:
+        return jsonify({"erro": str(ve)}), 400
+    except Exception as e:
+        return jsonify({"erro": f"Erro interno: {str(e)}"}), 500
