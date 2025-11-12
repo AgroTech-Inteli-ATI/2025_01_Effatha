@@ -9,20 +9,20 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
 app = Flask(__name__)
-app.config["JSON_SORT_KEYS"] = False  # preservar ordem (opcional)
+app.config["JSON_SORT_KEYS"] = False  # keep keys ordering
 
-# carrega .env que está na mesma pasta de app.py
+# gets .env from repo
 basedir = os.path.dirname(__file__)
 env_path = os.path.join(basedir, ".env")
 load_dotenv(env_path)
 
-# ---------- Earth Engine init (mesma lógica) ----------
+# Earth Engine init
 def init_ee():
     service_account = os.getenv("SERVICE_ACCOUNT_EMAIL")
     key_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_PATH")
     project = os.getenv("GEE_PROJECT")
 
-    # tenta extrair project_id/client_email do JSON se não fornecido
+    # try to extract key and user from .env
     if (not project) and key_path and os.path.exists(key_path):
         try:
             with open(key_path, "r") as f:
@@ -34,7 +34,7 @@ def init_ee():
         except Exception as e:
             print("Erro lendo JSON da chave:", e)
 
-    # tenta inicializar com service account
+    # try to initialize with service account
     if service_account and key_path and os.path.exists(key_path):
         try:
             creds = ee.ServiceAccountCredentials(service_account, key_path)
@@ -47,7 +47,7 @@ def init_ee():
         except Exception as e:
             print("Falha ao inicializar EE com service account:", e)
 
-    # fallback: credenciais aplicáveis localmente / interativas
+    # fallback: check if there is local credentials available
     try:
         ee.Initialize()
         print("EE initialized with existing application-default/interactive credentials.")
@@ -58,11 +58,11 @@ def init_ee():
 
 init_ee()
 
-# ---------- Helpers (copiados/ajustados) ----------
+# Helpers
 def kml_to_polygon_coords(kml_text: str):
     m = re.search(r"<coordinates>(.*?)</coordinates>", kml_text, re.DOTALL | re.IGNORECASE)
     if not m:
-        raise ValueError("KML não contém tag <coordinates> reconhecível.")
+        raise ValueError("KML does not contains tag <coordinates>")
     coords_text = m.group(1).strip()
     parts = re.split(r"\s+", coords_text.strip())
     polygon = []
@@ -85,12 +85,12 @@ def geojson_to_ee_geometry(geojson):
     if geom_type == "MultiPolygon":
         coords = geojson.get("coordinates")
         return ee.Geometry.MultiPolygon(coords)
-    raise ValueError("GeoJSON não é Polygon/MultiPolygon.")
+    raise ValueError("GeoJSON is not Polygon/MultiPolygon.")
 
 def select_sentinel_collection(collection_name: str):
     if (collection_name or "").upper() == "SENTINEL2":
         return ee.ImageCollection("COPERNICUS/S2_SR")
-    raise ValueError("Collection não suportada: " + str(collection_name))
+    raise ValueError("Collection not available: " + str(collection_name))
 
 def calc_indices_from_image(img):
     scaled = img.select(["B2","B3","B4","B5","B6","B7","B8","B8A","B11","B12"]).divide(10000.0)
@@ -132,7 +132,7 @@ def per_image_timeseries(collection, geom, max_images=100):
         result.append(entry)
     note = None
     if size > max_images:
-        note = f"Limited to {max_images} images out of {size} available. Increase max_images to include mais."
+        note = f"Limited to {max_images} images out of {size} available. Increase max_images to include more."
     return {"count_available": size, "returned_count": len(result), "note": note, "series": result}
 
 def period_timeseries(collection, geom, start_date, end_date, period_days=10):
@@ -144,7 +144,7 @@ def period_timeseries(collection, geom, start_date, end_date, period_days=10):
         period_start = ee.Date(current.strftime("%Y-%m-%d"))
         next_dt = current + timedelta(days=period_days)
         period_end_py = next_dt - timedelta(days=1)
-        # filter até next_dt (exclusive)
+        # filter up to next_dt (exclusive)
         col = collection.filterDate(period_start, ee.Date(next_dt.strftime("%Y-%m-%d"))).filterBounds(geom).filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 70))
         count = col.size().getInfo()
         if count == 0:
@@ -158,7 +158,7 @@ def period_timeseries(collection, geom, start_date, end_date, period_days=10):
         current = next_dt
     return result
 
-# ---------- Endpoint (Flask) ----------
+# Endpoint (Flask) 
 @app.route("/compute", methods=["POST"])
 def compute_metrics():
     try:
@@ -251,5 +251,5 @@ def compute_metrics():
     return make_response(jsonify(response), 200)
 
 if __name__ == "__main__":
-    # Em produção prefira gunicorn; aqui para dev rápido:
+    # execution
     app.run(host="0.0.0.0", port=8000, debug=True)
