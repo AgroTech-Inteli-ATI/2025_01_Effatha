@@ -509,4 +509,4 @@ O modelo oferece **flexibilidade inicial com US$ 794/mês e escalabilidade para 
 
 3. **Google Earth Engine Pricing.** Disponível em: <https://cloud.google.com/earth-engine/pricing?hl=pt-br#enterprise>. Acesso em: 22 nov. 2025.
 
----
+
