@@ -46,6 +46,7 @@ class Area(Base):
     propriedade = relationship("Propriedade", back_populates="areas")
     metricas = relationship("Metricas", back_populates="area", cascade="all, delete-orphan")
     metricas_preditivas = relationship("MetricasPreditivas", back_populates="area", cascade="all, delete-orphan")
+    metricas_solo = relationship("MetricasSolo", back_populates="area", cascade="all, delete-orphan")
 
     def to_dict(self):
         return {
@@ -161,3 +162,27 @@ class MetricasPreditivas(Base):
 
     def __repr__(self):
         return f"<MetricasPreditivas id={self.id} modelo={self.modelo_utilizado} area_id={self.area_id}>"
+
+
+class MetricasSolo(Base):
+    __tablename__ = "metricas_solo"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    area_id: Mapped[int] = mapped_column(Integer, ForeignKey("area.id", ondelete="CASCADE"), nullable=False)
+    periodo_inicio: Mapped[datetime] = mapped_column(Date, nullable=False)
+    periodo_fim: Mapped[datetime] = mapped_column(Date, nullable=False)
+
+    clay_mean: Mapped[Optional[float]] = mapped_column(DECIMAL)
+    clay_min: Mapped[Optional[float]] = mapped_column(DECIMAL)
+    clay_max: Mapped[Optional[float]] = mapped_column(DECIMAL)
+
+    area = relationship("Area", back_populates="metricas_solo")
+
+    def to_dict(self):
+        return {c.name: (float(getattr(self, c.name)) if isinstance(getattr(self, c.name), (int, float, complex)) else getattr(self, c.name)) for c in self.__table__.columns}
+
+    def __repr__(self):
+        return (
+            f"<MetricasSolo id={self.id} area_id={self.area_id} "
+            f"periodo=({self.periodo_inicio} → {self.periodo_fim})>"
+        )
