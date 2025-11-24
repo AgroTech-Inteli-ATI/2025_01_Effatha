@@ -172,13 +172,40 @@ class MetricasSolo(Base):
     periodo_inicio: Mapped[datetime] = mapped_column(Date, nullable=False)
     periodo_fim: Mapped[datetime] = mapped_column(Date, nullable=False)
 
-    clay_mean: Mapped[Optional[float]] = mapped_column(DECIMAL)
-    clay_min: Mapped[Optional[float]] = mapped_column(DECIMAL)
-    clay_max: Mapped[Optional[float]] = mapped_column(DECIMAL)
+    # --- Faixa 0-5 cm ---
+    clay_0_5_mean:   Mapped[Optional[float]] = mapped_column(DECIMAL)
+    clay_0_5_min:    Mapped[Optional[float]] = mapped_column(DECIMAL)
+    clay_0_5_max:    Mapped[Optional[float]] = mapped_column(DECIMAL)
+
+    # --- Faixa 5-15 cm ---
+    clay_5_15_mean:  Mapped[Optional[float]] = mapped_column(DECIMAL)
+    clay_5_15_min:   Mapped[Optional[float]] = mapped_column(DECIMAL)
+    clay_5_15_max:   Mapped[Optional[float]] = mapped_column(DECIMAL)
+
+    # --- Faixa 15-30 cm ---
+    clay_15_30_mean: Mapped[Optional[float]] = mapped_column(DECIMAL)
+    clay_15_30_min:  Mapped[Optional[float]] = mapped_column(DECIMAL)
+    clay_15_30_max:  Mapped[Optional[float]] = mapped_column(DECIMAL)
+
+    # --- Faixa 30-60 cm ---
+    clay_30_60_mean: Mapped[Optional[float]] = mapped_column(DECIMAL)
+    clay_30_60_min:  Mapped[Optional[float]] = mapped_column(DECIMAL)
+    clay_30_60_max:  Mapped[Optional[float]] = mapped_column(DECIMAL)
+
+    # --- Faixa 60-100 cm ---
+    clay_60_100_mean: Mapped[Optional[float]] = mapped_column(DECIMAL)
+    clay_60_100_min:  Mapped[Optional[float]] = mapped_column(DECIMAL)
+    clay_60_100_max:  Mapped[Optional[float]] = mapped_column(DECIMAL)
+
+    # --- Faixa 100-200 cm ---
+    clay_100_200_mean: Mapped[Optional[float]] = mapped_column(DECIMAL)
+    clay_100_200_min:  Mapped[Optional[float]] = mapped_column(DECIMAL)
+    clay_100_200_max:  Mapped[Optional[float]] = mapped_column(DECIMAL)
 
     area = relationship("Area", back_populates="metricas_solo")
 
     def to_dict(self):
+        # preserva comportamento atual: converte DECIMAL para float quando aplicável
         return {c.name: (float(getattr(self, c.name)) if isinstance(getattr(self, c.name), (int, float, complex)) else getattr(self, c.name)) for c in self.__table__.columns}
 
     def __repr__(self):
