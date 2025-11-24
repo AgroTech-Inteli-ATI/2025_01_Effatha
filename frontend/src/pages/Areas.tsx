@@ -4,6 +4,7 @@ import { Layout } from '@/components/Layout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import {
 	Dialog,
@@ -66,6 +67,7 @@ const Areas = () => {
 	const [selectedState, setSelectedState] = useState('');
 	const [selectedCity, setSelectedCity] = useState('');
 	const [selectedCrop, setSelectedCrop] = useState('');
+	const [observacoes, setObservacoes] = useState('');
 	const [copied, setCopied] = useState(false);
 	const [mapCenter, setMapCenter] = useState<{
 		lat: number;
@@ -79,6 +81,7 @@ const Areas = () => {
 		number | null
 	>(null);
 	const [isSaving, setIsSaving] = useState(false);
+	const [editingArea, setEditingArea] = useState<any>(null);
 
 	const [areas, setAreas] = useState<
 		{
@@ -283,6 +286,79 @@ const Areas = () => {
 		}
 	};
 
+	const resetForm = () => {
+		setEditingArea(null);
+		setPolygonCoordinates([]);
+		setAreaName('');
+		setSelectedState('');
+		setSelectedCity('');
+		setSelectedCrop('');
+		setObservacoes('');
+		setSelectedPropriedadeId(null);
+		setMapCenter(null);
+	};
+
+	const parseGeoToPolygons = (geo: any): Coordinate[][] | null => {
+		if (!geo) return null;
+		// se veio como string
+		const obj = typeof geo === 'string' ? JSON.parse(geo) : geo;
+
+		// suporta GeoJSON Polygon e MultiPolygon diretamente em 'coordinates'
+		if (obj.type === 'Polygon' && Array.isArray(obj.coordinates)) {
+			const ring = obj.coordinates[0] || [];
+			const coords = ring.map(([lng, lat]: [number, number]) => ({ lat, lng }));
+			return [coords];
+		}
+		if (obj.type === 'MultiPolygon' && Array.isArray(obj.coordinates)) {
+			return obj.coordinates.map((poly: any) =>
+				(poly[0] || []).map(([lng, lat]: [number, number]) => ({ lat, lng }))
+			);
+		}
+		// alguns retornos podem trazer { geometry: { type: 'Polygon', coordinates: [...] } }
+		const geometry = obj.geometry || obj;
+		if (geometry && geometry.type) {
+			return parseGeoToPolygons(geometry);
+		}
+
+		return null;
+	};
+
+	const loadAreaIntoForm = (areaNormalized: any) => {
+		// areaNormalized é o objeto que você usa em setAreas(...) (tem campos .raw)
+		const raw = areaNormalized.raw ?? areaNormalized;
+		setEditingArea(areaNormalized);
+		setAreaName(raw.nome_area ?? areaNormalized.name ?? '');
+		setSelectedState(raw.estado ?? areaNormalized.state ?? '');
+		setSelectedCity(raw.municipio ?? areaNormalized.city ?? '');
+		setSelectedCrop(
+			raw.cultura_principal ??
+				areaNormalized.cultura_principal ??
+				areaNormalized.crop ??
+				''
+		);
+		setSelectedPropriedadeId(raw.propriedade_id ?? null);
+		setObservacoes(raw.observacoes ?? '');
+
+		// converter coordenada para polygonCoordinates (Coordinate[][])
+		try {
+			const geo = raw.coordenada ?? null;
+			const parsed = parseGeoToPolygons(geo);
+			if (parsed) {
+				setPolygonCoordinates(parsed);
+				// centraliza mapa no primeiro ponto
+				const firstPoly = parsed[0];
+				if (firstPoly && firstPoly.length > 0) {
+					setMapCenter({ lat: firstPoly[0].lat, lng: firstPoly[0].lng });
+				}
+			} else {
+				setPolygonCoordinates([]);
+			}
+		} catch (err) {
+			console.error('Erro ao interpretar coordenada da área:', err);
+			setPolygonCoordinates([]);
+		}
+	};
+
 	const handleLocationSelect = (lat: number, lng: number, name: string) => {
 		setMapCenter({ lat, lng });
 		toast({
@@ -424,52 +500,84 @@ const Areas = () => {
 			nome_area: areaName,
 			cultura_principal: selectedCrop || null,
 			imagens: null,
-			observacoes: null,
+			observacoes: observacoes || null,
 		};
 
 		try {
-			const r = await fetch(`${API_BASE}/api/area/`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(payload),
-			});
+			let r;
+			if (editingArea) {
+				// Atualização (PUT)
+				// obtém id real (raw pode conter o id vindo do backend)
+				const areaId = editingArea.raw?.id ?? editingArea.id;
+				r = await fetch(`${API_BASE}/api/area/${areaId}`, {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(payload),
+				});
 
-			if (!r.ok) {
-				const text = await r.text();
-				throw new Error(`Status ${r.status}: ${text}`);
+				if (!r.ok) {
+					const text = await r.text();
+					throw new Error(`Status ${r.status}: ${text}`);
+				}
+
+				const updated = await r.json();
+				toast({
+					title: 'Área atualizada!',
+					description: `Área "${updated.nome_area ?? areaName}" atualizada.`,
+				});
+
+				// atualizar lista local de areas (substituir item)
+				const normalized = {
+					id: Number(updated.id),
+					name: updated.nome_area ?? areaName ?? `Área ${updated.id}`,
+					state: updated.estado ?? selectedState ?? '-',
+					city: updated.municipio ?? selectedCity ?? '-',
+					crop: updated.cultura_principal ?? selectedCrop ?? '-',
+					status: 'Ativa',
+					raw: updated,
+				};
+				setAreas((prev) =>
+					prev.map((a) => (a.id === normalized.id ? normalized : a))
+				);
+			} else {
+				// Criação (POST) — comportamento anterior
+				r = await fetch(`${API_BASE}/api/area/`, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(payload),
+				});
+
+				if (!r.ok) {
+					const text = await r.text();
+					throw new Error(`Status ${r.status}: ${text}`);
+				}
+
+				const created = await r.json();
+				toast({
+					title: 'Área salva!',
+					description: `Área "${areaName}" criada (id: ${created.id ?? '?'}).`,
+				});
+
+				const createdNormalized = {
+					id: Number(created.id),
+					name: created.nome_area ?? areaName ?? `Área ${created.id}`,
+					state: created.estado ?? selectedState ?? '-',
+					city: created.municipio ?? selectedCity ?? '-',
+					crop: created.cultura_principal ?? selectedCrop ?? '-',
+					status: 'Ativa',
+					raw: created,
+				};
+				setAreas((prev) => [createdNormalized, ...prev]);
 			}
 
-			const created = await r.json();
-			toast({
-				title: 'Área salva!',
-				description: `Área "${areaName}" criada (id: ${created.id ?? '?'}).`,
-			});
-
-			// limpa formulário
+			// limpa formulário e fecha modal
+			resetForm();
 			setIsDialogOpen(false);
-			setPolygonCoordinates([]);
-			setAreaName('');
-			setSelectedState('');
-			setSelectedCity('');
-			setSelectedCrop('');
-			setSelectedPropriedadeId(null);
-
-			// atualiza lista local de areas (append) sem re-fetch completo
-			const createdNormalized = {
-				id: Number(created.id),
-				name: created.nome_area ?? areaName ?? `Área ${created.id}`,
-				state: created.estado ?? selectedState ?? '-',
-				city: created.municipio ?? selectedCity ?? '-',
-				crop: created.cultura_principal ?? selectedCrop ?? '-',
-				status: 'Ativa',
-				raw: created,
-			};
-			setAreas((prev) => [createdNormalized, ...prev]);
 		} catch (err) {
-			console.error('Erro salvando área:', err);
+			console.error('Erro salvando/atualizando área:', err);
 			toast({
 				title: 'Erro',
-				description: 'Falha ao salvar área (verifique o backend).',
+				description: 'Falha ao salvar/atualizar área (verifique o backend).',
 				variant: 'destructive',
 			});
 		} finally {
@@ -530,7 +638,10 @@ const Areas = () => {
 					</div>
 
 					<Button
-						onClick={() => setIsDialogOpen(true)}
+						onClick={() => {
+							resetForm();
+							setIsDialogOpen(true);
+						}}
 						className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2"
 					>
 						<Plus className="h-4 w-4" />
@@ -586,17 +697,23 @@ const Areas = () => {
 														variant="outline"
 														size="sm"
 														className="border-accent text-accent hover:bg-accent hover:text-accent-foreground"
+														onClick={() => {
+															// area é o item do map
+															loadAreaIntoForm(area);
+															setIsDialogOpen(true);
+														}}
 													>
 														Atualizar
 													</Button>
+
 													<Button
-  variant="outline"
-  size="sm"
-  className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
-  onClick={() => handleDeleteArea(area.id)}
->
-  Excluir
-</Button>
+														variant="outline"
+														size="sm"
+														className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
+														onClick={() => handleDeleteArea(area.id)}
+													>
+														Excluir
+													</Button>
 												</div>
 											</TableCell>
 										</TableRow>
@@ -668,7 +785,7 @@ const Areas = () => {
 					<div className="flex flex-col h-full">
 						<DialogHeader className="p-6 pb-4 border-b border-border">
 							<DialogTitle className="text-2xl font-bold">
-								Criar Nova Área
+								{editingArea ? 'Editar Área' : 'Criar Nova Área'}
 							</DialogTitle>
 							<p className="text-muted-foreground">
 								Use a barra de busca para encontrar a localização, depois
@@ -861,7 +978,19 @@ const Areas = () => {
 												</SelectContent>
 											</Select>
 										</div>
-
+										<div>
+											<Label htmlFor="observacoes">
+												Observações (opcional)
+											</Label>
+											<Textarea
+												id="observacoes"
+												placeholder="Digite observações sobre esta área..."
+												value={observacoes}
+												onChange={(e) => setObservacoes(e.target.value)}
+												className="bg-card border-border mt-1"
+												rows={4}
+											/>
+										</div>
 										<div className="border-t border-border pt-4">
 											<Label className="mb-2 block">
 												Ou importe de um arquivo
@@ -892,8 +1021,7 @@ const Areas = () => {
 								variant="outline"
 								onClick={() => {
 									setIsDialogOpen(false);
-									setPolygonCoordinates([]);
-									setAreaName('');
+									resetForm();
 								}}
 								className="border-border"
 							>
@@ -911,10 +1039,13 @@ const Areas = () => {
 							>
 								{isSaving ? (
 									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+								) : editingArea ? (
+									// ícone para editar/guardar (mantive Plus para simplicidade — opcional trocar)
+									<Plus className="h-4 w-4 mr-2" />
 								) : (
 									<Plus className="h-4 w-4 mr-2" />
 								)}
-								Adicionar Área
+								{editingArea ? 'Salvar alterações' : 'Adicionar Área'}
 							</Button>
 						</div>
 					</div>
