@@ -12,7 +12,7 @@ Este documento apresenta a modelagem final do banco de dados PostgreSQL da plata
 
 ## Diagrama de Entidade-Relacionamento
 
-![Diagrama Final do Banco de Dados Supabase](./diagrama-banco-final.png)
+![Diagrama Final do Banco de Dados Supabase](./assets/diagrama-banco-final.jpeg)
 
 ## Estrutura das Tabelas
 
