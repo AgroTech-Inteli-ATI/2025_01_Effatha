@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
 from flasgger import Swagger
 from .routes import all_blueprints
-from .models import Base, Propriedade, Area, Metricas, MetricasPreditivas
+from .models import Base, Propriedade, Area, Metricas, MetricasPreditivas, Relatorio
 from flask_cors import CORS
 
 def create_app():

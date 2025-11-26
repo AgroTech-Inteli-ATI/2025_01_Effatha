@@ -86,6 +86,10 @@ def _call_clay_api(geometry: Any, depth: str = "0-5cm", scale: int = 250, soil_u
     Chama o endpoint /clay para obter métricas de argila para UMA profundidade.
     Retorna dicionário com keys: clay_mean, clay_min, clay_max (float ou None)
     """
+
+    if not soil_url:
+        soil_url = CLAY_URL
+
     payload = {
         "geometry": geometry,
         "depth": depth,
@@ -123,6 +127,8 @@ def fill_missing_periodic_metrics(area_id: int, start_date_str: str, end_date_st
     end_date_py = datetime.fromisoformat(end_date_str).date()
     if start_date_py > end_date_py:
         raise ValueError("start_date maior que end_date")
+    
+    soil_url = soil_url or CLAY_URL
 
     chunks = _chunks_from_range(start_date_py, end_date_py, period_days)
 

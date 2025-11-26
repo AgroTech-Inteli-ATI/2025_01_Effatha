@@ -1,11 +1,15 @@
+# backend/CRUD/routes/area_routes.py
 from flask import Flask, jsonify, request, Blueprint
 from flasgger import Swagger
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select, and_
 from CRUD.database import SessionLocal, engine, get_db
-from CRUD.models import Base, Area  
+from CRUD.models import Base, Area, Metricas
 from sqlalchemy.exc import SQLAlchemyError
-from datetime import date
+from datetime import date, timedelta
+
+# import do manager para gerar métricas (usa o mesmo que metricas_routes / services)
+from CRUD.services.metrics_manager import fill_missing_periodic_metrics
 
 area_bp = Blueprint('area_bp', __name__, url_prefix='/api/area')
 
@@ -17,17 +21,12 @@ area_bp = Blueprint('area_bp', __name__, url_prefix='/api/area')
 def listar_areas():
     """
     Lista todas as áreas
-    Retorna uma lista de todas as áreas cadastradas.
     ---
     tags:
       - Área
     responses:
       200:
         description: Lista de áreas retornada com sucesso.
-        schema:
-          type: array
-          items:
-            $ref: '#/definitions/Area'
     """
     with SessionLocal() as db:
         areas = db.scalars(select(Area)).all()
@@ -37,7 +36,6 @@ def listar_areas():
 def get_area(id_area):
     """
     Retorna uma área pelo ID
-    Busca e retorna os detalhes de uma área específica.
     ---
     tags:
       - Área
@@ -45,15 +43,6 @@ def get_area(id_area):
       - name: id_area
         in: path
         required: true
-        type: integer
-        description: ID da área a ser buscada.
-    responses:
-      200:
-        description: Área encontrada.
-        schema:
-          $ref: '#/definitions/Area'
-      404:
-        description: Área não encontrada.
     """
     with SessionLocal() as db:
         area = db.get(Area, id_area)
@@ -66,54 +55,9 @@ def get_area(id_area):
 def criar_area():
     """
     Cria uma nova área
-    Cadastra uma nova área no sistema, associada a uma propriedade.
     ---
     tags:
       - Área
-    parameters:
-      - in: body
-        name: body
-        required: true
-        schema:
-          type: object
-          required:
-            - propriedade_id
-            - coordenada
-            - municipio
-            - estado
-            - nome_area
-          properties:
-            propriedade_id:
-              type: integer
-              description: ID da propriedade à qual a área pertence.
-            coordenada:
-              type: object
-              description: Coordenadas geográficas da área.
-            municipio:
-              type: string
-              description: Município onde a área está localizada.
-            estado:
-              type: string
-              description: Estado onde a área está localizada.
-            nome_area:
-              type: string
-              description: Nome da área.
-            cultura_principal:
-              type: string
-              description: Cultura principal cultivada na área.
-            imagens:
-              type: string
-              description: URL ou caminho para imagens da área.
-            observacoes:
-              type: string
-              description: Observações adicionais sobre a área.
-    responses:
-      201:
-        description: Área criada com sucesso.
-        schema:
-          $ref: '#/definitions/Area'
-      400:
-        description: Erro na requisição ou no banco de dados.
     """
     data = request.get_json()
     with SessionLocal() as db:
@@ -140,55 +84,9 @@ def criar_area():
 def atualizar_area(id_area):
     """
     Atualiza uma área
-    Atualiza os dados de uma área existente.
     ---
     tags:
       - Área
-    parameters:
-      - name: id_area
-        in: path
-        required: true
-        type: integer
-        description: ID da área a ser atualizada.
-      - in: body
-        name: body
-        required: true
-        schema:
-          type: object
-          properties:
-            propriedade_id:
-              type: integer
-              description: Novo ID da propriedade à qual a área pertence.
-            coordenada:
-              type: object
-              description: Novas coordenadas geográficas da área.
-            municipio:
-              type: string
-              description: Novo município.
-            estado:
-              type: string
-              description: Novo estado.
-            nome_area:
-              type: string
-              description: Novo nome da área.
-            cultura_principal:
-              type: string
-              description: Nova cultura principal.
-            imagens:
-              type: string
-              description: Nova URL ou caminho para imagens.
-            observacoes:
-              type: string
-              description: Novas observações.
-    responses:
-      200:
-        description: Área atualizada com sucesso.
-        schema:
-          $ref: '#/definitions/Area'
-      404:
-        description: Área não encontrada.
-      400:
-        description: Erro na requisição ou no banco de dados.
     """
     data = request.get_json()
     with SessionLocal() as db:
@@ -218,23 +116,9 @@ def atualizar_area(id_area):
 def deletar_area(id_area):
     """
     Deleta uma área pelo ID
-    Remove uma área do sistema.
     ---
     tags:
       - Área
-    parameters:
-      - name: id_area
-        in: path
-        required: true
-        type: integer
-        description: ID da área a ser deletada.
-    responses:
-      200:
-        description: Área removida com sucesso.
-      404:
-        description: Área não encontrada.
-      400:
-        description: Erro no banco de dados.
     """
     with SessionLocal() as db:
         area = db.get(Area, id_area)
@@ -247,3 +131,92 @@ def deletar_area(id_area):
         except SQLAlchemyError as e:
             db.rollback()
             return jsonify({"erro": str(e)}), 400
+
+
+# ---------------------------
+# Endpoint novo: métricas por área
+# ---------------------------
+@area_bp.route("/<int:area_id>/metrics", methods=["GET"])
+def area_metrics(area_id: int):
+    """
+    Retorna métricas agregadas (timeseries) para a área.
+    Query params:
+      - days (int, opcional, default 30): intervalo a partir de hoje (days dias)
+      - generate (bool, opcional, default false): se true chama fill_missing_periodic_metrics antes de retornar
+      - period_days (int, opcional, default 10): janela usada pelo generator
+    ---
+    tags:
+      - Área
+    """
+    # parse params
+    try:
+        days = int(request.args.get("days", "30"))
+    except Exception:
+        days = 30
+    generate = request.args.get("generate", "false").lower() in ("1", "true", "t", "yes")
+    try:
+        period_days = int(request.args.get("period_days", "10"))
+    except Exception:
+        period_days = 10
+
+    end_dt = date.today()
+    start_dt = end_dt - timedelta(days=max(0, days - 1))
+
+    # if generate requested, call the manager (synchronously)
+    if generate:
+        try:
+            # note: may take long — in production prefer async job queue
+            fill_missing_periodic_metrics(
+                area_id=area_id,
+                start_date_str=start_dt.isoformat(),
+                end_date_str=end_dt.isoformat(),
+                period_days=period_days
+            )
+        except Exception as exc:
+            return jsonify({"erro": "Erro ao gerar métricas: " + str(exc)}), 500
+
+    # now query Metricas for the given range and return timeseries
+    try:
+        with SessionLocal() as db:
+            q = db.query(Metricas).filter(
+                and_(
+                    Metricas.area_id == area_id,
+                    Metricas.periodo_inicio >= start_dt,
+                    Metricas.periodo_fim <= end_dt,
+                )
+            ).order_by(Metricas.periodo_inicio)
+            rows = q.all()
+
+            def _safe(v):
+                try:
+                    return float(v) if v is not None else None
+                except Exception:
+                    return None
+
+            out = {
+                "ndvi": [],
+                "evi": [],
+                "ndwi": [],
+                "ndmi": [],
+                "gndvi": [],
+                "ndre": [],
+                "rendvi": [],
+                "biomassa": [],
+                "cobertura_vegetal": []
+            }
+
+            for r in rows:
+                ts = r.periodo_inicio.isoformat()
+                out["ndvi"].append({"date": ts, "value": _safe(r.ndvi_mean)})
+                out["evi"].append({"date": ts, "value": _safe(r.evi_mean)})
+                out["ndwi"].append({"date": ts, "value": _safe(r.ndwi_mean)})
+                out["ndmi"].append({"date": ts, "value": _safe(r.ndmi_mean)})
+                out["gndvi"].append({"date": ts, "value": _safe(r.gndvi_mean)})
+                out["ndre"].append({"date": ts, "value": _safe(r.ndre_mean)})
+                out["rendvi"].append({"date": ts, "value": _safe(r.rendvi_mean)})
+                out["biomassa"].append({"date": ts, "value": _safe(r.biomassa)})
+                out["cobertura_vegetal"].append({"date": ts, "value": _safe(r.cobertura_vegetal)})
+
+            return jsonify(out), 200
+    except SQLAlchemyError as exc:
+        return jsonify({"erro": str(exc)}), 500
