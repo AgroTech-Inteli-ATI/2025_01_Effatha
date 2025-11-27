@@ -1,5 +1,4 @@
-# 🌱 Ferramenta de Mensuração Agrícola via Imagens de Satélite – Effatha
-
+# 2025_01_Effatha
 **AgroTech Inteli + Effatha · 2025**
 
 Este repositório contém o código-fonte, documentação e entregáveis do projeto desenvolvido em parceria entre o **AgroTech Inteli** e a **Effatha**, com o objetivo de criar uma plataforma completa para **análise agrícola via imagens de satélite**, incluindo comparação temporal, métricas vegetativas (NDVI, EVI, biomassa), relatórios e previsões simples.
@@ -159,83 +158,73 @@ Componente central da plataforma:
 
 ## 🚀 Como Executar
 
-### Visão geral
+### 1. Pré‑requisitos
 
-O repositório contém dois serviços Python (autenticação e API CRUD) dentro da pasta `src/` e o frontend em `frontend/` (Vite + React). Abaixo estão comandos recomendados para rodar localmente. Ajuste variáveis de ambiente (`.env`) conforme necessário.
+* Python 3.10+
+* Node.js 18+
+* npm
 
-### Frontend
+### 2. Estrutura do Projeto
 
-```bash
-cd frontend
-npm install
-# em desenvolvimento (dev server Vite)
-npm run dev
-# para testar build de produção localmente
-npm run build
-npm run preview
+O script considera automaticamente a estrutura fornecida:
+
+```
+2025_01_Effatha/
+ ┣ backend/
+ ┣ frontend/
+ ┗ requirements.txt
 ```
 
-Observação: o comando `npm start` não existe neste projeto; o dev server é executado com `npm run dev` (Vite), por padrão na porta 5173.
+### 3. Como executar
 
-### Backend — Serviço de Autenticação (src/auth)
-
-```bash
-cd src/auth
-# (recomendado) criar e ativar um ambiente virtual
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-# opcional: exportar SECRET_KEY ou criar um arquivo .env com SECRET_KEY
-export SECRET_KEY="sua_chave_secreta_local"
-# iniciar:
-python app.py
-```
-
-Notas importantes:
-
-- O `app.py` já contém `app.run(debug=True)` no bloco `__main__`, então `python app.py` é a forma mais simples de iniciar.
-- O código usa `SESSION_COOKIE_SECURE = True` (cookies só em HTTPS). Para testar localmente via HTTP, comente/ajuste essa configuração ou use HTTPS/local proxy.
-- Certifique-se de colocar o arquivo de credenciais Firebase `firebase-auth.json` em `src/auth/` ou ajustar o caminho no código.
-
-### Backend — API CRUD (src/CRUD)
+#### Linux/Mac OS
+1. Dê permissão de execução ao script:
 
 ```bash
-cd src/CRUD
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-# Defina a variável de conexão com o banco (por ex. DATABASE_URL) em src/CRUD/.env ou exporte no ambiente
-export DATABASE_URL="postgresql://user:pass@localhost:5432/seu_db"
-# iniciar o serviço
-python main.py
+chmod +x start_all.sh
 ```
 
-Notas:
-
-- O serviço cria as tabelas via SQLAlchemy em `main.py` (Base.metadata.create_all(bind=engine)).
-- Se preferir usar `flask run`, ajuste `FLASK_APP` para `CRUD.main` e rode `flask run --host=0.0.0.0` a partir da pasta `src/CRUD`.
-
-### Google Earth Engine
+2. Execute:
 
 ```bash
-earthengine authenticate
+./start_all.sh
 ```
 
-### URLs úteis após iniciar
+#### Windows
 
-- Frontend (Vite dev): http://localhost:5173
-- CRUD health check (Flask): http://127.0.0.1:5000/
+1. Permita execução de scripts (caso ainda não esteja liberado):
 
-Se quiser, eu atualizo mais detalhes do `.env` e adiciono exemplos mínimos dos `export`/`.env` para cada serviço.
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+```
 
----
+2. Execute o script:
+
+```powershell
+./start_all.ps1
+```
+
+3. O PowerShell abrirá janelas separadas para backend, métricas e frontend.
+
+### 4. O que o script faz automaticamente
+
+1. Cria e ativa o ambiente virtual Python
+2. Instala todas as dependências listadas em `requirements.txt`
+3. Executa:
+   * `backend/metrics/agro_metrics.py`
+   * `backend/metrics/soil_metrics.py`
+   * API principal: `python -m CRUD.main`
+4. Instala dependências do frontend e executa `npm run dev`
+
+### 5. Encerramento
+
+Para finalizar todos os serviços, use **Ctrl + C**.
 
 ## 👥 Equipe
 
 - **AgroTech Inteli** – Desenvolvimento, pesquisa e coordenação
 - **Effatha** – Orientação técnica e validação científica
 
----
 
 ## 📜 Licença
 

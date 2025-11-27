@@ -1,7 +1,8 @@
 from flask import Flask, jsonify
 from flasgger import Swagger
 from .routes import all_blueprints
-from .models import Base, Propriedade, Area, Metricas, MetricasPreditivas
+from .models import Base, Propriedade, Area, Metricas, MetricasPreditivas, Relatorio
+from flask_cors import CORS
 
 def create_app():
     """
@@ -9,7 +10,8 @@ def create_app():
     """
     # Inicialização do Flask
     app = Flask(__name__)
-
+    # CORS(app, origins=["http://localhost:8080", "http://127.0.0.1:8080"])
+    CORS(app)
     # Inicialização do Swagger
     Swagger(app)
 

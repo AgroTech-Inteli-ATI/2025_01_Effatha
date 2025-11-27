@@ -3,7 +3,7 @@ from flasgger import Swagger
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from CRUD.database import SessionLocal, engine, get_db
-from CRUD.models import Base, Metricas  
+from CRUD.models import Base, Metricas
 from CRUD.services.metrics_manager import fill_missing_periodic_metrics
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import date
@@ -361,6 +361,10 @@ def fill_missing_metrics():
       - end_date (YYYY-MM-DD)
       - period_days (int, opcional, default=10)
       - collection (str, opcional, default='SENTINEL2')
+      - include_soil_metrics (bool, opcional) -> se true, coletará todas as profundidades e criará MetricasSolo
+      - soil_depth (str, opcional) -> profundidade padrão para chamadas unitárias (caso necessário)
+      - soil_scale (int, opcional)
+      - soil_url (str, opcional) -> override da URL do serviço de solo
     Ele verifica quais janelas periódicas estão faltando para a área e insere somente os períodos faltantes.
     """
     data = request.get_json()
@@ -376,12 +380,22 @@ def fill_missing_metrics():
         period_days = int(data.get("period_days", 10))
         collection = data.get("collection", "SENTINEL2")
 
+        # novos parâmetros para coleta de solo
+        include_soil_metrics = bool(data.get("include_soil_metrics", False))
+        soil_depth = data.get("soil_depth", "0-5cm")
+        soil_scale = int(data.get("soil_scale", 250))
+        soil_url = data.get("soil_url", None)
+
         summary = fill_missing_periodic_metrics(
             area_id=area_id,
             start_date_str=start_date,
             end_date_str=end_date,
             period_days=period_days,
-            collection=collection
+            collection=collection,
+            include_soil_metrics=include_soil_metrics,
+            soil_depth=soil_depth,
+            soil_scale=soil_scale,
+            soil_url=soil_url
         )
         return jsonify(summary), 200
     except ValueError as ve:

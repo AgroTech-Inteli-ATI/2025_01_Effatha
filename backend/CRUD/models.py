@@ -1,11 +1,11 @@
-from sqlalchemy import Integer, String, TIMESTAMP, ForeignKey, DECIMAL, Date, Text
+# backend/CRUD/models.py
+from sqlalchemy import Integer, String, TIMESTAMP, ForeignKey, DECIMAL, Date, Text, Boolean
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from CRUD.database import Base
 from datetime import datetime
 from typing import Optional, Dict
-
 
 class Propriedade(Base):
     __tablename__ = "propriedade"
@@ -47,6 +47,8 @@ class Area(Base):
     metricas = relationship("Metricas", back_populates="area", cascade="all, delete-orphan")
     metricas_preditivas = relationship("MetricasPreditivas", back_populates="area", cascade="all, delete-orphan")
     metricas_solo = relationship("MetricasSolo", back_populates="area", cascade="all, delete-orphan")
+
+    relatorios = relationship("Relatorio", back_populates="area", cascade="all, delete-orphan")
 
     def to_dict(self):
         return {
@@ -172,13 +174,40 @@ class MetricasSolo(Base):
     periodo_inicio: Mapped[datetime] = mapped_column(Date, nullable=False)
     periodo_fim: Mapped[datetime] = mapped_column(Date, nullable=False)
 
-    clay_mean: Mapped[Optional[float]] = mapped_column(DECIMAL)
-    clay_min: Mapped[Optional[float]] = mapped_column(DECIMAL)
-    clay_max: Mapped[Optional[float]] = mapped_column(DECIMAL)
+    # --- Faixa 0-5 cm ---
+    clay_0_5_mean:   Mapped[Optional[float]] = mapped_column(DECIMAL)
+    clay_0_5_min:    Mapped[Optional[float]] = mapped_column(DECIMAL)
+    clay_0_5_max:    Mapped[Optional[float]] = mapped_column(DECIMAL)
+
+    # --- Faixa 5-15 cm ---
+    clay_5_15_mean:  Mapped[Optional[float]] = mapped_column(DECIMAL)
+    clay_5_15_min:   Mapped[Optional[float]] = mapped_column(DECIMAL)
+    clay_5_15_max:   Mapped[Optional[float]] = mapped_column(DECIMAL)
+
+    # --- Faixa 15-30 cm ---
+    clay_15_30_mean: Mapped[Optional[float]] = mapped_column(DECIMAL)
+    clay_15_30_min:  Mapped[Optional[float]] = mapped_column(DECIMAL)
+    clay_15_30_max:  Mapped[Optional[float]] = mapped_column(DECIMAL)
+
+    # --- Faixa 30-60 cm ---
+    clay_30_60_mean: Mapped[Optional[float]] = mapped_column(DECIMAL)
+    clay_30_60_min:  Mapped[Optional[float]] = mapped_column(DECIMAL)
+    clay_30_60_max:  Mapped[Optional[float]] = mapped_column(DECIMAL)
+
+    # --- Faixa 60-100 cm ---
+    clay_60_100_mean: Mapped[Optional[float]] = mapped_column(DECIMAL)
+    clay_60_100_min:  Mapped[Optional[float]] = mapped_column(DECIMAL)
+    clay_60_100_max:  Mapped[Optional[float]] = mapped_column(DECIMAL)
+
+    # --- Faixa 100-200 cm ---
+    clay_100_200_mean: Mapped[Optional[float]] = mapped_column(DECIMAL)
+    clay_100_200_min:  Mapped[Optional[float]] = mapped_column(DECIMAL)
+    clay_100_200_max:  Mapped[Optional[float]] = mapped_column(DECIMAL)
 
     area = relationship("Area", back_populates="metricas_solo")
 
     def to_dict(self):
+        # preserva comportamento atual: converte DECIMAL para float quando aplicável
         return {c.name: (float(getattr(self, c.name)) if isinstance(getattr(self, c.name), (int, float, complex)) else getattr(self, c.name)) for c in self.__table__.columns}
 
     def __repr__(self):
@@ -186,3 +215,35 @@ class MetricasSolo(Base):
             f"<MetricasSolo id={self.id} area_id={self.area_id} "
             f"periodo=({self.periodo_inicio} → {self.periodo_fim})>"
         )
+class Relatorio(Base):
+    __tablename__ = "relatorio"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    area_id: Mapped[int] = mapped_column(Integer, ForeignKey("area.id", ondelete="CASCADE"), nullable=False)
+
+    nome: Mapped[Optional[str]] = mapped_column(String(200))
+    periodo_inicio: Mapped[datetime] = mapped_column(Date, nullable=False)
+    periodo_fim: Mapped[datetime] = mapped_column(Date, nullable=False)
+    period_days: Mapped[int] = mapped_column(Integer, nullable=False, default=10)
+
+    collection: Mapped[str] = mapped_column(String(50), nullable=False, default="SENTINEL2")
+    include_soil_metrics: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default="false")
+    soil_depth: Mapped[Optional[str]] = mapped_column(String(50))
+    soil_scale: Mapped[Optional[int]] = mapped_column(Integer)
+    soil_url: Mapped[Optional[str]] = mapped_column(Text)
+
+    status: Mapped[str] = mapped_column(String(20), nullable=False, server_default="pending")
+    job_id: Mapped[Optional[str]] = mapped_column(String(150))
+    results: Mapped[Optional[Dict]] = mapped_column(JSONB)  # cache em JSON para uso no front
+
+    data_criacao: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=False), server_default=func.now())
+    started_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP(timezone=False))
+    finished_at: Mapped[Optional[datetime]] = mapped_column(TIMESTAMP(timezone=False))
+
+    area = relationship("Area", back_populates="relatorios")
+
+    def to_dict(self):
+        return {c.name: (float(getattr(self, c.name)) if isinstance(getattr(self, c.name), (int, float, complex)) else getattr(self, c.name)) for c in self.__table__.columns}
+
+    def __repr__(self):
+        return f"<Relatorio id={self.id} area_id={self.area_id} periodo=({self.periodo_inicio} → {self.periodo_fim}) status={self.status}>"
