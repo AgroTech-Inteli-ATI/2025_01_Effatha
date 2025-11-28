@@ -73,9 +73,9 @@ Armazena valores calculados de índices de vegetação obtidos via análise de i
 - **EVI** (Enhanced Vegetation Index) - Índice melhorado de vegetação
 - **NDWI** (Normalized Difference Water Index) - Conteúdo de água
 - **NDMI** (Normalized Difference Moisture Index) - Umidade do solo
-- **GNDVI** (Green NDVI) - Clorofila
+- **GNDVI** (Green Normalized Difference Vegetation Index) - Clorofila
 - **NDRE** (Normalized Difference Red Edge) - Nitrogênio
-- **RENDVI** (Red-Edge NDVI) - Estresse vegetal
+- **RENDVI** (Red-Edge Normalized Difference Vegetation Index) - Estresse vegetal
 
 **Outras métricas:**
 
