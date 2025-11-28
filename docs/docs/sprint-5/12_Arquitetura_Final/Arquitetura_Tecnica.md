@@ -514,7 +514,6 @@ POST /compute
       "evi": 0.6234,
       "biomass": 42.56
     }
-    // ...
   ],
   "image_count": 24,
   "cloud_coverage_avg": 8.3
@@ -1307,7 +1306,6 @@ test('calls onPolygonCreated when polygon is drawn', () => {
   render(<MapDrawer onPolygonCreated={mockCallback} />);
   
   // Simular desenho de polígono
-  // ...
   
   expect(mockCallback).toHaveBeenCalledWith(expect.any(Array));
 });

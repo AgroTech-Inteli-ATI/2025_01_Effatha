@@ -48,27 +48,25 @@ A plataforma AgroTech foi desenvolvida com tecnologias modernas e escaláveis, s
 ### Stack Principal
 
 #### React + TypeScript + Vite
-- **React 18+**: Biblioteca UI moderna com hooks e context
-- **TypeScript**: Tipagem estática para maior segurança e produtividade
-- **Vite**: Build tool ultrarrápido para desenvolvimento
-- **Bun**: Runtime JavaScript alternativo (opcional)
+- **React 18.3**: Biblioteca UI moderna com hooks e context
+- **TypeScript 5.x**: Tipagem estática para maior segurança e produtividade
+- **Vite 5.x**: Build tool ultrarrápido para desenvolvimento
 
 #### Estilização
-- **Tailwind CSS**: Framework CSS utility-first
+- **Tailwind CSS 3.4**: Framework CSS utility-first
 - **shadcn/ui**: Componentes React acessíveis e customizáveis
 - **Radix UI**: Primitivos headless para componentes complexos
 - **Lucide Icons**: Biblioteca de ícones moderna
 
 #### Estado e Dados
-- **React Query (TanStack Query)**: Gerenciamento de estado servidor
-- **Context API**: Estado global da aplicação
-- **Zustand/Jotai**: Gerenciamento de estado leve (se necessário)
+- **React Query (TanStack Query) 5.x**: Gerenciamento de estado servidor
+- **React Hook Form 7.x**: Gerenciamento de formulários
+- **Zod**: Validação de schemas TypeScript-first
 
 #### Mapas e Visualização
-- **Leaflet/Mapbox GL**: Mapas interativos
-- **React-Leaflet**: Bindings React para Leaflet
-- **Chart.js / Recharts**: Gráficos e visualizações
-- **D3.js**: Visualizações customizadas (se necessário)
+- **Leaflet 1.9**: Mapas interativos
+- **React-Leaflet 4.x**: Bindings React para Leaflet
+- **Recharts 2.x**: Gráficos e visualizações de dados
 
 #### Roteamento e Navegação
 - **React Router v6**: Roteamento client-side
@@ -364,41 +362,42 @@ SECRET_KEY=your-secret-key
 ```json
 {
   "dependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-router-dom": "^6.x",
-    "@tanstack/react-query": "^5.x",
-    "tailwindcss": "^3.x",
-    "leaflet": "^1.x",
-    "react-leaflet": "^4.x",
-    "chart.js": "^4.x",
-    "recharts": "^2.x"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.30.1",
+    "@tanstack/react-query": "^5.83.0",
+    "tailwindcss": "^3.4.17",
+    "leaflet": "^1.9.4",
+    "react-leaflet": "^4.2.1",
+    "leaflet-draw": "^1.0.4",
+    "recharts": "^2.15.4",
+    "react-hook-form": "^7.61.1",
+    "zod": "^3.25.76",
+    "@radix-ui/react-*": "vários componentes",
+    "lucide-react": "^0.462.0",
+    "class-variance-authority": "^0.7.1",
+    "tailwind-merge": "^2.6.0"
   },
   "devDependencies": {
-    "@types/react": "^19.x",
-    "typescript": "^5.x",
-    "vite": "^6.x"
+    "@types/react": "^18.3.23",
+    "typescript": "^5.8.3",
+    "vite": "^5.4.19"
   }
 }
 ```
 
 ### Backend (`requirements.txt`)
-```
-Flask==3.0.0
-flask-cors==4.0.0
-flasgger==0.9.7
-SQLAlchemy==2.0.23
-psycopg2-binary==2.9.9
-earthengine-api==0.1.384
-geemap==0.29.6
-geopandas==0.14.1
-statsmodels==0.14.1
-scikit-learn==1.3.2
-pandas==2.1.4
-numpy==1.26.2
-firebase-admin==6.3.0
-PyJWT==2.8.0
-python-dotenv==1.0.0
+```txt
+earthengine-api>=0.1.403
+flask
+flask-cors
+flasgger
+SQLAlchemy
+psycopg2-binary
+python-dotenv
+requests>=2.31.0
+google-auth>=2.23.0
+google-api-python-client>=2.132.0
 ```
 
 ## 🚀 Deploy e DevOps

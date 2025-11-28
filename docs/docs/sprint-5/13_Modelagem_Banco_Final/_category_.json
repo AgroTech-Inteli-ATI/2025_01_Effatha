@@ -1,0 +1,8 @@
+{
+  "label": "Modelagem Banco Final",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Versão final da modelagem do banco de dados com todas as otimizações."
+  }
+}

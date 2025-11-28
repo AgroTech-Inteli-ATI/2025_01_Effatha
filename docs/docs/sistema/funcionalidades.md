@@ -48,9 +48,20 @@ A plataforma calcula automaticamente diversos índices de vegetação utilizando
 - **Objetivo**: Medir umidade da vegetação
 - **Aplicação**: Detecção precoce de seca
 
-### SAVI (Soil-Adjusted Vegetation Index)
-- **Objetivo**: Índice ajustado para minimizar influência do solo
-- **Melhor para**: Áreas com vegetação esparsa
+### GNDVI (Green Normalized Difference Vegetation Index)
+- **Objetivo**: Variação do NDVI usando a banda verde ao invés da vermelha
+- **Melhor para**: Detecção de clorofila e nitrogênio foliar
+- **Estatísticas**: média, mediana e desvio padrão
+
+### NDRE (Normalized Difference Red Edge)
+- **Objetivo**: Índice baseado na banda Red Edge (exclusivo Sentinel-2)
+- **Aplicação**: Estimativa de conteúdo de nitrogênio e clorofila
+- **Estatísticas**: média, mediana e desvio padrão
+
+### RENDVI (Red Edge NDVI)
+- **Objetivo**: Variação do NDVI usando Red Edge
+- **Melhor para**: Análise de estresse de plantas e nutrição
+- **Estatísticas**: média, mediana e desvio padrão
 
 ### Cobertura Vegetal
 - **Cálculo**: Percentual da área coberta por vegetação

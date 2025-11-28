@@ -503,10 +503,10 @@ O modelo oferece **flexibilidade inicial com US$ 794/mês e escalabilidade para 
 
 ## Referências
 
-1. **Supabase Pricing.** Disponível em: <https://supabase.com/pricing>. Acesso em: 22 nov. 2025.
+1. **Supabase Pricing.** Disponível em: [https://supabase.com/pricing](https://supabase.com/pricing). Acesso em: 22 nov. 2025.
 
-2. **Render Pricing.** Disponível em: <https://render.com/pricing>. Acesso em: 22 nov. 2025.
+2. **Render Pricing.** Disponível em: [https://render.com/pricing](https://render.com/pricing). Acesso em: 22 nov. 2025.
 
-3. **Google Earth Engine Pricing.** Disponível em: <https://cloud.google.com/earth-engine/pricing?hl=pt-br#enterprise>. Acesso em: 22 nov. 2025.
+3. **Google Earth Engine Pricing.** Disponível em: [https://cloud.google.com/earth-engine/pricing?hl=pt-br#enterprise](https://cloud.google.com/earth-engine/pricing?hl=pt-br#enterprise). Acesso em: 22 nov. 2025.
 
 ---
