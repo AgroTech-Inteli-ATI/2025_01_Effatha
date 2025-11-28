@@ -1,0 +1,8 @@
+{
+  "label": "Métricas de Solo",
+  "position": 9,
+  "link": {
+    "type": "generated-index",
+    "description": "Análise e implementação de métricas relacionadas às propriedades do solo utilizando dados de satélite."
+  }
+}

@@ -3,14 +3,14 @@ import {themes as prismThemes} from 'prism-react-renderer';
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'AgroTech Inteli',
-  tagline: 'Dinosaurs are cool',
+  title: 'AgroTech Inteli - Effatha',
+  tagline: 'Plataforma de Análise Agrícola via Imagens de Satélite',
   favicon: 'img/favicon.ico',
 
-  url: 'https://inteliprojects.github.io', // Atualize conforme sua organização
-  baseUrl: '2025_01_Effatha',
+  url: 'https://agrotech-inteli-ati.github.io',
+  baseUrl: '/2025_01_Effatha/',
 
-  organizationName: 'InteliProjects', // Atualize conforme sua organização
+  organizationName: 'AgroTech-Inteli-ATI',
   projectName: '2025_01_Effatha',
 
   onBrokenLinks: 'throw',
@@ -68,17 +68,50 @@ const config = {
         style: 'dark',
         links: [
           {
-            title: 'Docs',
+            title: 'Documentação',
             items: [
               {
-                label: 'Documentação',
+                label: 'Introdução',
                 to: '/',
+              },
+              {
+                label: 'Guia de Uso',
+                to: '/guia/como-usar',
+              },
+              {
+                label: 'Instalação',
+                to: '/suporte/instalacao',
               },
             ],
           },
-          // Resto do footer continua igual
+          {
+            title: 'Comunidade',
+            items: [
+              {
+                label: 'Inteli',
+                href: 'https://www.inteli.edu.br/',
+              },
+              {
+                label: 'Liga AgroTech',
+                href: 'mailto:agrotech@inteli.edu.br',
+              },
+            ],
+          },
+          {
+            title: 'Recursos',
+            items: [
+              {
+                label: 'GitHub',
+                href: 'https://github.com/AgroTech-Inteli-ATI/2025_01_Effatha',
+              },
+              {
+                label: 'Google Earth Engine',
+                href: 'https://earthengine.google.com/',
+              },
+            ],
+          },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} AgroTech Inteli - Effatha. Desenvolvido com Docusaurus.`,
       },
       prism: {
         theme: prismThemes.github,
