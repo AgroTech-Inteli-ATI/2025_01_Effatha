@@ -109,19 +109,19 @@ Fluxo de autenticação:
 
 - Cadastro: usuário cria conta com e-mail/senha (ou via provedor externo).
 - Login: frontend envia credenciais para endpoint de login; backend retorna token JWT ou cookie de sessão.
-- Rotas protegidas: frontend inclui token Authorization: Bearer <token> nas requisições.
+- Rotas protegidas: frontend inclui token `Authorization: Bearer <token>` nas requisições.
 
 Comportamento esperado do sistema (exemplos):
 
 - Login bem-sucedido:
   - Status HTTP: 200
-  - Body: { "token": "<jwt>", "user": { "id": "...", "email": "...", "name": "..." } }
+  - Body: `{ "token": "JWT_TOKEN", "user": { "id": "...", "email": "...", "name": "..." } }`
 - Credenciais inválidas:
   - Status HTTP: 401
-  - Body: { "error": "Credenciais inválidas" }
+  - Body: `{ "error": "Credenciais inválidas" }`
 - Token expirado:
   - Status HTTP: 401
-  - Body: { "error": "Token expirado" }
+  - Body: `{ "error": "Token expirado" }`
 
 ## Navegação e principais funcionalidades do Frontend
 
@@ -186,9 +186,9 @@ Fluxo resumido:
 Respostas e status:
 
 - Requisição aceita para processamento: 202 Accepted
-  - Body: { "report_id": "<id>", "status": "processing" }
+  - Body: `{ "report_id": "<id>", "status": "processing" }`
 - Relatório pronto: 200 OK
-  - Body: { "report_id": "<id>", "status": "ready", "url": "https://.../download" }
+  - Body: `{ "report_id": "<id>", "status": "ready", "url": "https://.../download" }`
 
 ## Endpoints da API (exemplos)
 
@@ -205,7 +205,7 @@ Request:
 Success (200):
 
 ```json
-{ "token": "<jwt>", "user": { "id": "u1", "email": "user@example.com" } }
+{ "token": "JWT_TOKEN_HERE", "user": { "id": "u1", "email": "user@example.com" } }
 ```
 
 2. Criar projeto — POST /api/projects
@@ -270,8 +270,8 @@ Padrões gerais:
 
 - Sucesso: 200/201/204 com mensagem clara (ex.: "Projeto criado com sucesso").
 - Erro de validação (dados inválidos): 400 Bad Request com campo `errors` detalhando problemas.
-- Não autorizado: 401 Unauthorized com { "error": "Não autorizado" }.
-- Não encontrado: 404 Not Found com { "error": "Recurso não encontrado" }.
+- Não autorizado: 401 Unauthorized com `{ "error": "Não autorizado" }`.
+- Não encontrado: 404 Not Found com `{ "error": "Recurso não encontrado" }`.
 - Erro interno do servidor: 500 Internal Server Error com ID do log para rastreio.
 
 Exemplos de mensagens que o frontend deve exibir:

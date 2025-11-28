@@ -1,8 +1,0 @@
-{
-  "label": "Modelo Preditivo",
-  "position": 9,
-  "link": {
-    "type": "generated-index",
-    "description": "Documentação de como foi feito o processo de treino e teste do modelo preditivo"
-  }
-}

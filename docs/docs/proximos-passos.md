@@ -1,5 +1,5 @@
 ---
-sidebar_position: 6
+sidebar_position: 10
 slug: /proximos-passos
 description: "Planejamento para implementação em produção e próximos desenvolvimentos"
 ---
