@@ -1,0 +1,13 @@
+earthengine-api>=0.1.403
+requests>=2.31.0
+google-auth>=2.23.0
+google-api-python-client>=2.132.0
+httplib2>=0.22.0
+flask
+python-dotenv
+psycopg2-binary
+sqlalchemy
+flask_sqlalchemy 
+flasgger 
+python-dotenv
+flask_cors

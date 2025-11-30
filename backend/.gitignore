@@ -1,0 +1,5 @@
+venv/
+.env
+auth/firebase-auth.json
+__pycache__/
+keys/*.json

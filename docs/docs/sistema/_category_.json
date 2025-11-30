@@ -1,8 +1,8 @@
 {
   "label": "Sistema",
-  "position": 4,
+  "position": 8,
   "link": {
     "type": "generated-index",
-    "description": "Documentação técnica do Dashboard Morro Verde - funcionalidades, tipos de dados processados, análises disponíveis e arquitetura tecnológica."
+    "description": "Documentação técnica da plataforma AgroTech - funcionalidades, tecnologias utilizadas e arquitetura do sistema."
   }
 }
