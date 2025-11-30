@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Desenhar Polígono no Google Maps</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    #map {
+      height: 100%;
+      width: 100%;
+    }
+    #coords {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 10px;
+      border-radius: 6px;
+      font-family: monospace;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+      max-width: 90%;
+      overflow-wrap: break-word;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div id="coords">Desenhe um polígono para ver as coordenadas...</div>
+
+  <!-- Script da API do Google Maps com Drawing Library -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVSbdXySlCO9r7owsFWffqtzfzkAkPEww&libraries=drawing"></script>
+
+  <script>
+    function initMap() {
+      const map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 5,
+        center: { lat: -15.78, lng: -47.93 }, // Brasília
+        mapTypeId: 'hybrid'
+      });
+
+      const drawingManager = new google.maps.drawing.DrawingManager({
+        drawingMode: google.maps.drawing.OverlayType.POLYGON,
+        drawingControl: true,
+        drawingControlOptions: {
+          position: google.maps.ControlPosition.TOP_CENTER,
+          drawingModes: ['polygon']
+        },
+        polygonOptions: {
+          fillColor: '#1E90FF',
+          fillOpacity: 0.3,
+          strokeWeight: 2,
+          strokeColor: '#1E90FF',
+          clickable: true,
+          editable: true
+        }
+      });
+
+      drawingManager.setMap(map);
+
+      const coordsBox = document.getElementById("coords");
+
+      google.maps.event.addListener(drawingManager, 'overlaycomplete', event => {
+        if (event.type === google.maps.drawing.OverlayType.POLYGON) {
+          const path = event.overlay.getPath();
+          const coords = [];
+          for (let i = 0; i < path.getLength(); i++) {
+            const point = path.getAt(i);
+            coords.push([point.lng(), point.lat()]);
+          }
+
+          const coordsJSON = JSON.stringify(coords, null, 2);
+          coordsBox.textContent = coordsJSON;
+          console.log('Polygon coordinates:', coordsJSON);
+        }
+      });
+    }
+
+    // Inicializa o mapa quando a página carregar
+    window.onload = initMap;
+  </script>
+</body>
+</html>
