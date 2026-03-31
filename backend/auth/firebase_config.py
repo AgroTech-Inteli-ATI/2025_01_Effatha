@@ -1,6 +1,6 @@
 # This file contains the firebase configuration details.
 firebaseConfig = {
-  "apiKey": "AIzaSyDrXfRBC_QlFc4ez0wQivOYoR5DiI2Aobo",
+  "apiKey": "-",
   "authDomain": "agrotech---effatha.firebaseapp.com",
   "projectId": "agrotech---effatha",
   "storageBucket": "agrotech---effatha.firebasestorage.app",
